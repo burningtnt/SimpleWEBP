@@ -40,21 +40,19 @@ tasks.compileTestJava {
 }
 
 tasks.create<Task>("generateModuleInfo") {
-    val outputFile = File(project.buildDir, "classes/module-info.class")
+    dependsOn(tasks.compileJava)
+
+    val outputFile = File(project.buildDir, "module-info/module-info.class")
 
     doLast {
         val cw = org.objectweb.asm.ClassWriter(0)
-        cw.visit(org.objectweb.asm.Opcodes.V1_8, org.objectweb.asm.Opcodes.ACC_MODULE, "module-info", null, null, null)
+        cw.visit(org.objectweb.asm.Opcodes.V9, org.objectweb.asm.Opcodes.ACC_MODULE, "module-info", null, null, null)
 
-        val mv = cw.visitModule("net.burningtnt.webp", org.objectweb.asm.Opcodes.ACC_MANDATED, null)
-        mv.visitRequire("java.base", org.objectweb.asm.Opcodes.ACC_SYNTHETIC, "8")
-        mv.visitRequire(
-            "javafx.graphics",
-            org.objectweb.asm.Opcodes.ACC_MANDATED or org.objectweb.asm.Opcodes.ACC_STATIC,
-            "8"
-        )
-        mv.visitExport("net.burningtnt.webp.vp8l", org.objectweb.asm.Opcodes.ACC_MANDATED)
-        mv.visitExport("net.burningtnt.webp.jfx", org.objectweb.asm.Opcodes.ACC_MANDATED)
+        val mv = cw.visitModule("net.burningtnt.webp", 0, null)
+        mv.visitRequire("java.base", 0, null)
+        mv.visitRequire("javafx.graphics", org.objectweb.asm.Opcodes.ACC_STATIC, null)
+        mv.visitExport("net.burningtnt.webp.vp8l", 0)
+        mv.visitExport("net.burningtnt.webp.jfx", 0)
         mv.visitEnd()
 
         cw.visitEnd()
@@ -70,7 +68,7 @@ tasks.processResources {
     dependsOn(tasks.getByName("generateModuleInfo"))
 
     into("") {
-        from("${project.buildDir}/classes/module-info.class") {
+        from("${project.buildDir}/module-info/module-info.class") {
         }
     }
 }
