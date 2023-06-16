@@ -31,19 +31,19 @@
 
 package net.burningtnt.webp.vp8l.huffman;
 
-import javafx.scene.image.WritableImage;
+import net.burningtnt.webp.utils.RGBABuffer;
 
 /**
  * @author Simon Kammermeier
  */
 public final class HuffmanInfo {
-    public final WritableImage huffmanMetaCodes; // Raster allows intuitive lookup by x and y
+    public final RGBABuffer huffmanMetaCodes; // Raster allows intuitive lookup by x and y
 
     public final int metaCodeBits;
 
     public final HuffmanCodeGroup[] huffmanGroups;
 
-    public HuffmanInfo(WritableImage huffmanMetaCodes, int metaCodeBits, HuffmanCodeGroup[] huffmanGroups) {
+    public HuffmanInfo(RGBABuffer huffmanMetaCodes, int metaCodeBits, HuffmanCodeGroup[] huffmanGroups) {
         this.huffmanMetaCodes = huffmanMetaCodes;
         this.metaCodeBits = metaCodeBits;
         this.huffmanGroups = huffmanGroups;

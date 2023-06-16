@@ -31,8 +31,7 @@
 
 package net.burningtnt.webp.vp8l.transform;
 
-import javafx.scene.image.WritableImage;
-import net.burningtnt.webp.utils.AwtJavaFxTranslator;
+import net.burningtnt.webp.utils.RGBABuffer;
 
 /**
  * @author Simon Kammermeier
@@ -45,7 +44,7 @@ public final class SubtractGreenTransform implements Transform {
     }
 
     @Override
-    public void applyInverse(WritableImage raster) {
+    public void applyInverse(RGBABuffer raster) {
         int width = (int) raster.getWidth();
         int height = (int) raster.getHeight();
 
@@ -54,10 +53,10 @@ public final class SubtractGreenTransform implements Transform {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
 //                raster.getDataElements(x, y, rgba);
-                AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, y, rgba);
+                RGBABuffer.getDataElements(raster, x, y, rgba);
                 addGreenToBlueAndRed(rgba);
 //                raster.setDataElements(x, y, rgba);
-                AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+                RGBABuffer.setDataElements(raster, x, y, rgba);
             }
         }
     }

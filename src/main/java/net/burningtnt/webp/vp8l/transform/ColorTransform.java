@@ -31,39 +31,38 @@
 
 package net.burningtnt.webp.vp8l.transform;
 
-import javafx.scene.image.WritableImage;
-import net.burningtnt.webp.utils.AwtJavaFxTranslator;
+import net.burningtnt.webp.utils.RGBABuffer;
 
 /**
  * @author Simon Kammermeier
  */
 public final class ColorTransform implements Transform {
-    private final WritableImage data;
+    private final RGBABuffer data;
     private final byte bits;
 
-    public ColorTransform(WritableImage raster, byte bits) {
+    public ColorTransform(RGBABuffer raster, byte bits) {
         this.data = raster;
         this.bits = bits;
     }
 
     @Override
-    public void applyInverse(WritableImage raster) {
-        int width = (int) raster.getWidth();
-        int height = (int) raster.getHeight();
+    public void applyInverse(RGBABuffer raster) {
+        int width = raster.getWidth();
+        int height = raster.getHeight();
 
         byte[] rgba = new byte[4];
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 // data.getDataElements(x >> bits, y >> bits, rgba);
-                AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(data, x >> bits, y >> bits, rgba);
+                RGBABuffer.getDataElements(data, x >> bits, y >> bits, rgba);
 //                ColorTransformElement trans = new ColorTransformElement(rgba);
                 int green_to_red = rgba[2];
                 int green_to_blue = rgba[1];
                 int red_to_blue = rgba[0];
 
                 // raster.getDataElements(x, y, rgba);
-                AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, y, rgba);
+                RGBABuffer.getDataElements(raster, x, y, rgba);
 
 //                trans.inverseTransform(rgba);
                 int tmp_red = rgba[0];
@@ -77,7 +76,7 @@ public final class ColorTransform implements Transform {
                 rgba[2] = (byte) (tmp_blue & 0xff);
 
                 // raster.setDataElements(x, y, rgba);
-                AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+                RGBABuffer.setDataElements(raster, x, y, rgba);
             }
         }
     }

@@ -31,10 +31,8 @@
 
 package net.burningtnt.webp.vp8l;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import net.burningtnt.webp.utils.AwtJavaFxTranslator;
 import net.burningtnt.webp.utils.LSBBitInputStream;
+import net.burningtnt.webp.utils.RGBABuffer;
 import net.burningtnt.webp.vp8l.colorcache.ColorCache;
 import net.burningtnt.webp.vp8l.huffman.HuffmanCodeGroup;
 import net.burningtnt.webp.vp8l.huffman.HuffmanInfo;
@@ -93,7 +91,7 @@ public final class VP8LDecoder {
         this.lsbBitReader = imageInput;
     }
 
-    public static Image decodeStream(InputStream inputStream) throws IOException {
+    public static RGBABuffer decodeStream(InputStream inputStream) throws IOException {
         ByteArrayInputStream byteArrayInputStream;
         if (inputStream instanceof ByteArrayInputStream) {
             byteArrayInputStream = (ByteArrayInputStream) inputStream;
@@ -140,15 +138,14 @@ public final class VP8LDecoder {
             throw new IOException("Invalid Version.");
         }
 
-        WritableImage outputBuffer = AwtJavaFxTranslator.createWritableImage(width, height);
+        RGBABuffer outputBuffer = RGBABuffer.createAbsoluteImage(width, height);
 
         new VP8LDecoder(lsbBitInputStream).readVP8Lossless(outputBuffer, true, width, height);
-        AwtJavaFxTranslator.enableVanillaPixelAccessor(outputBuffer);
 
         return outputBuffer;
     }
 
-    private void readVP8Lossless(final WritableImage raster, final boolean topLevel, int width, int height) throws IOException {
+    private void readVP8Lossless(final RGBABuffer raster, final boolean topLevel, int width, int height) throws IOException {
         int xSize = width;
 
         // Read transforms
@@ -176,10 +173,10 @@ public final class VP8LDecoder {
             colorCache = new ColorCache(colorCacheBits);
         }
 
-        WritableImage decodeRaster;
+        RGBABuffer decodeRaster;
         if (topLevel) {
             // If multiple indices packed into one pixel xSize is different from raster width
-            decodeRaster = AwtJavaFxTranslator.createSubWritableImage(raster, 0, 0, xSize, height);
+            decodeRaster = RGBABuffer.createChildImage(raster, 0, 0, xSize, height);
         } else {
             // All recursive calls have Rasters of the correct sizes with origin (0, 0)
             decodeRaster = raster;
@@ -193,9 +190,9 @@ public final class VP8LDecoder {
         }
     }
 
-    private void decodeImage(WritableImage raster, HuffmanInfo huffmanInfo, ColorCache colorCache) throws IOException {
-        int width = (int) raster.getWidth();
-        int height = (int) raster.getHeight();
+    private void decodeImage(RGBABuffer raster, HuffmanInfo huffmanInfo, ColorCache colorCache) throws IOException {
+        int width = raster.getWidth();
+        int height = raster.getHeight();
 
         int huffmanMask = huffmanInfo.metaCodeBits == 0 ? -1 : ((1 << huffmanInfo.metaCodeBits) - 1);
         HuffmanCodeGroup curCodeGroup = huffmanInfo.huffmanGroups[0];
@@ -208,7 +205,7 @@ public final class VP8LDecoder {
                     // Crossed border into new metaGroup
 //                    int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 0);
                     // huffmanInfo.huffmanMetaCodes IntRaster
-                    int index = AwtJavaFxTranslator.getSampleAsIntFromWritableImage(huffmanInfo.huffmanMetaCodes, x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
+                    int index = RGBABuffer.getSampleAsIntFromWritableImage(huffmanInfo.huffmanMetaCodes, x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
                     curCodeGroup = huffmanInfo.huffmanGroups[index];
                 }
 
@@ -227,7 +224,7 @@ public final class VP8LDecoder {
                     // Reset Huffman meta group
                     if (y < height && x < width && huffmanInfo.huffmanMetaCodes != null) {
 //                        int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 0);
-                        int index = AwtJavaFxTranslator.getSampleAsIntFromWritableImage(huffmanInfo.huffmanMetaCodes, x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
+                        int index = RGBABuffer.getSampleAsIntFromWritableImage(huffmanInfo.huffmanMetaCodes, x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
                         curCodeGroup = huffmanInfo.huffmanGroups[index];
                     }
                 } else { // colorCache
@@ -237,7 +234,7 @@ public final class VP8LDecoder {
         }
     }
 
-    private void decodeCached(WritableImage raster, ColorCache colorCache, byte[] rgba, int y, int x, short code) {
+    private void decodeCached(RGBABuffer raster, ColorCache colorCache, byte[] rgba, int y, int x, short code) {
         int argb = colorCache.lookup(code - 256 - 24);
 
         rgba[0] = (byte) ((argb >> 16) & 0xff);
@@ -246,10 +243,10 @@ public final class VP8LDecoder {
         rgba[3] = (byte) (argb >>> 24);
 
 //        raster.setDataElements(x, y, rgba);
-        AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+        RGBABuffer.setDataElements(raster, x, y, rgba);
     }
 
-    private void decodeLiteral(WritableImage raster, ColorCache colorCache, HuffmanCodeGroup curCodeGroup, byte[] rgba, int y, int x, short code) throws IOException {
+    private void decodeLiteral(RGBABuffer raster, ColorCache colorCache, HuffmanCodeGroup curCodeGroup, byte[] rgba, int y, int x, short code) throws IOException {
         byte red = (byte) curCodeGroup.redCode.readSymbol(lsbBitReader);
         byte blue = (byte) curCodeGroup.blueCode.readSymbol(lsbBitReader);
         byte alpha = (byte) curCodeGroup.alphaCode.readSymbol(lsbBitReader);
@@ -259,14 +256,14 @@ public final class VP8LDecoder {
         rgba[2] = blue;
         rgba[3] = alpha;
 //        raster.setDataElements(x, y, rgba);
-        AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+        RGBABuffer.setDataElements(raster, x, y, rgba);
 
         if (colorCache != null) {
             colorCache.insert((alpha & 0xff) << 24 | (red & 0xff) << 16 | (code & 0xff) << 8 | (blue & 0xff));
         }
     }
 
-    private int decodeBwRef(WritableImage raster, ColorCache colorCache, int width, HuffmanCodeGroup curCodeGroup, byte[] rgba, short code, int x, int y) throws IOException {
+    private int decodeBwRef(RGBABuffer raster, ColorCache colorCache, int width, HuffmanCodeGroup curCodeGroup, byte[] rgba, short code, int x, int y) throws IOException {
         int length = lz77decode(code - 256);
 
         short distancePrefix = curCodeGroup.distanceCode.readSymbol(lsbBitReader);
@@ -301,9 +298,9 @@ public final class VP8LDecoder {
             }
 
 //            raster.getDataElements(xSrc++, ySrc, rgba);
-            AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, xSrc++, ySrc, rgba);
+            RGBABuffer.getDataElements(raster, xSrc++, ySrc, rgba);
 //            raster.setDataElements(x, y, rgba);
-            AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+            RGBABuffer.setDataElements(raster, x, y, rgba);
 
             if (xSrc == width) {
                 xSrc = 0;
@@ -344,10 +341,10 @@ public final class VP8LDecoder {
 
                 int blockWidth = subSampleSize(xSize, sizeBits);
                 int blockHeight = subSampleSize(ySize, sizeBits);
-                WritableImage raster =
+                RGBABuffer raster =
 //                        Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, blockWidth, blockHeight, 4 * blockWidth, 4,
 //                                new int[]{0, 1, 2, 3}, null);
-                        AwtJavaFxTranslator.createWritableImage(blockWidth, blockHeight);
+                        RGBABuffer.createAbsoluteImage(blockWidth, blockHeight);
                 readVP8Lossless(raster, false, blockWidth, blockHeight);
 
                 // Keep data as raster for convenient (x,y) indexing
@@ -382,7 +379,7 @@ public final class VP8LDecoder {
                 // assuming a height of one pixel and a width of
                 // color_table_size. The color table is always
                 // subtraction-coded to reduce image entropy.
-                WritableImage colorTableWritableImage = AwtJavaFxTranslator.createWritableImage(colorTableSize, 1);
+                RGBABuffer colorTableWritableImage = RGBABuffer.createAbsoluteImage(colorTableSize, 1);
                 readVP8Lossless(
 //                        Raster.createInterleavedRaster(
 //                                new DataBufferByte(colorTable, colorTableSize * 4),
@@ -392,7 +389,7 @@ public final class VP8LDecoder {
 
                 byte[] colorTableWritableImageBuffer = new byte[4];
                 for (int x = 0; x < colorTableSize; x++) {
-                    AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(colorTableWritableImage, x, 0, colorTableWritableImageBuffer);
+                    RGBABuffer.getDataElements(colorTableWritableImage, x, 0, colorTableWritableImageBuffer);
                     System.arraycopy(colorTableWritableImageBuffer, 0, colorTable, x * 4, 4);
                 }
 
@@ -428,7 +425,7 @@ public final class VP8LDecoder {
 
         int metaCodeBits = 0;
 
-        WritableImage huffmanMetaCodes = null;
+        RGBABuffer huffmanMetaCodes = null;
 
         if (readMetaCodes && lsbBitReader.readBit() == 1) {
             // read in meta codes
@@ -437,9 +434,9 @@ public final class VP8LDecoder {
             huffmanYSize = subSampleSize(ySize, metaCodeBits);
 
             // Raster with elements as BARG (only the RG components encode the meta group)
-            WritableImage packedRaster =
+            RGBABuffer packedRaster =
 //                    Raster.createPackedRaster(DataBuffer.TYPE_INT, huffmanXSize, huffmanYSize, new int[]{0x0000ff00, 0x000000ff, 0xff000000, 0x00ff0000}, null);
-                    AwtJavaFxTranslator.createWritableImage(huffmanXSize, huffmanYSize);
+                    RGBABuffer.createAbsoluteImage(huffmanXSize, huffmanYSize);
             readVP8Lossless(packedRaster, false, huffmanXSize, huffmanYSize);
 
 //            int[] data = ((DataBufferInt) packedRaster.getDataBuffer()).getData();
@@ -450,7 +447,7 @@ public final class VP8LDecoder {
 //            }
             for (int x = 0; x < packedRaster.getWidth(); x++) {
                 for (int y = 0; y < packedRaster.getHeight(); y++) {
-                    maxCode = Math.max(maxCode, AwtJavaFxTranslator.getSampleAsIntFromWritableImage(packedRaster, x, y, 1));
+                    maxCode = Math.max(maxCode, RGBABuffer.getSampleAsIntFromWritableImage(packedRaster, x, y, 1));
                 }
             }
             huffmanGroupNum = maxCode + 1;

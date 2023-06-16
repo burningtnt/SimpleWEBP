@@ -35,8 +35,10 @@ tasks.compileJava {
     targetCompatibility = "8"
 }
 
-tasks.compileTestJava {
-    options.release.set(8)
+tasks.test {
+    jvmArgs!!.addAll(listOf(
+        "--add-opens=java.base/java.io"
+    ))
 }
 
 tasks.create<Task>("generateModuleInfo") {

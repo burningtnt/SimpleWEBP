@@ -31,7 +31,7 @@
 
 package net.burningtnt.webp.vp8l.transform;
 
-import javafx.scene.image.WritableImage;
+import net.burningtnt.webp.utils.RGBABuffer;
 
 /**
  * Transform.
@@ -39,5 +39,5 @@ import javafx.scene.image.WritableImage;
  * @author <a href="mailto:harald.kuhr@gmail.com">Harald Kuhr</a>
  */
 public interface Transform {
-    void applyInverse(WritableImage raster);
+    void applyInverse(RGBABuffer raster);
 }

@@ -42,10 +42,6 @@ public final class ColorCache {
 
     private static final long K_HASH_MUL = 0x1e35a7bdL;
 
-    private static int hashPix(final int argb, final int shift) {
-        return (int) (((argb * K_HASH_MUL) & 0xffffffffL) >> shift);
-    }
-
     public ColorCache(final int hashBits) {
         assert hashBits > 0 : "hasBits must > 0";
 
@@ -59,20 +55,11 @@ public final class ColorCache {
         return colors[key];
     }
 
-    public void set(final int key, final int argb) {
-        colors[key] = argb;
-    }
-
     public void insert(final int argb) {
-        colors[index(argb)] = argb;
+        colors[hashPix(argb, hashShift)] = argb;
     }
 
-    public int index(final int argb) {
-        return hashPix(argb, hashShift);
-    }
-
-    public int contains(final int argb) {
-        int key = index(argb);
-        return colors[key] == argb ? key : -1;
+    private static int hashPix(final int argb, final int shift) {
+        return (int) (((argb * K_HASH_MUL) & 0xffffffffL) >> shift);
     }
 }

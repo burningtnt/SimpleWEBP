@@ -31,8 +31,7 @@
 
 package net.burningtnt.webp.vp8l.transform;
 
-import javafx.scene.image.WritableImage;
-import net.burningtnt.webp.utils.AwtJavaFxTranslator;
+import net.burningtnt.webp.utils.RGBABuffer;
 
 /**
  * @author Simon Kammermeier
@@ -64,16 +63,16 @@ public final class PredictorTransform implements Transform {
     private static final int PREDICTOR_CLAMP_ADD_SUB_FULL = 12; // ClampAddSubtractFull(L, T, TL)
     private static final int PREDICTOR_CLAMP_ADD_SUB_HALF = 13; // ClampAddSubtractHalf(Average2(L, T), TL)
 
-    private final WritableImage data;
+    private final RGBABuffer data;
     private final byte bits;
 
-    public PredictorTransform(WritableImage raster, byte bits) {
+    public PredictorTransform(RGBABuffer raster, byte bits) {
         this.data = raster;
         this.bits = bits;
     }
 
     @Override
-    public void applyInverse(WritableImage raster) {
+    public void applyInverse(RGBABuffer raster) {
         int width = (int) raster.getWidth();
         int height = (int) raster.getHeight();
 
@@ -83,10 +82,10 @@ public final class PredictorTransform implements Transform {
 
         // (0,0) Black (0x000000ff) predict
         // raster.getDataElements(0, 0, rgba);
-        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, 0, 0, rgba);
+        RGBABuffer.getDataElements(raster, 0, 0, rgba);
         rgba[3] += 0xff;
         // raster.setDataElements(0, 0, rgba);
-        AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, 0, 0, rgba);
+        RGBABuffer.setDataElements(raster, 0, 0, rgba);
 
         byte[] predictor = new byte[4];
         byte[] predictor2 = new byte[4];
@@ -95,34 +94,34 @@ public final class PredictorTransform implements Transform {
         // (x,0) L predict
         for (int x = 1; x < width; x++) {
 //            raster.getDataElements(x, 0, rgba);
-            AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, 0, rgba);
+            RGBABuffer.getDataElements(raster, x, 0, rgba);
 //            raster.getDataElements(x - 1, 0, predictor);
-            AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x - 1, 0, predictor);
+            RGBABuffer.getDataElements(raster, x - 1, 0, predictor);
             addPixels(rgba, predictor);
 
 //            raster.setDataElements(x, 0, rgba);
-            AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, 0, rgba);
+            RGBABuffer.setDataElements(raster, x, 0, rgba);
         }
 
         // (0,y) T predict
         for (int y = 1; y < height; y++) {
 //            raster.getDataElements(0, y, rgba);
-            AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, 0, y, rgba);
+            RGBABuffer.getDataElements(raster, 0, y, rgba);
 //            raster.getDataElements(0, y - 1, predictor);
-            AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, 0, y - 1, predictor);
+            RGBABuffer.getDataElements(raster, 0, y - 1, predictor);
             addPixels(rgba, predictor);
 
 //            raster.setDataElements(0, y, rgba);
-            AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, 0, y, rgba);
+            RGBABuffer.setDataElements(raster, 0, y, rgba);
         }
 
         for (int y = 1; y < height; y++) {
             for (int x = 1; x < width; x++) {
 //                int transformType = data.getSample(x >> bits, y >> bits, 1);
-                int transformType = AwtJavaFxTranslator.getSampleAsIntFromWritableImage(data, x >> bits, y >> bits, 1);
+                int transformType = RGBABuffer.getSampleAsIntFromWritableImage(data, x >> bits, y >> bits, 1);
 
 //                raster.getDataElements(x, y, rgba);
-                AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, y, rgba);
+                RGBABuffer.getDataElements(raster, x, y, rgba);
 
                 int lX = x - 1; // x for left
                 int tY = y - 1; // y for top
@@ -137,84 +136,84 @@ public final class PredictorTransform implements Transform {
                         break;
                     case PREDICTOR_L:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_T:
 //                        raster.getDataElements(x, tY, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor);
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_TR:
 //                        raster.getDataElements(trX, trY, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, trX, trY, predictor);
+                        RGBABuffer.getDataElements(raster, trX, trY, predictor);
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_TL:
 //                        raster.getDataElements(lX, tY, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor);
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_AVG_L_TR_T:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(trX, trY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, trX, trY, predictor2);
+                        RGBABuffer.getDataElements(raster, trX, trY, predictor2);
                         average2(predictor, predictor2);
 
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
                         average2(predictor, predictor2);
 
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_AVG_L_TL:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(lX, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor2);
                         average2(predictor, predictor2);
 
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_AVG_L_T:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
                         average2(predictor, predictor2);
 
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_AVG_TL_T:
 //                        raster.getDataElements(lX, tY, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor);
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
                         average2(predictor, predictor2);
 
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_AVG_T_TR:
 //                        raster.getDataElements(x, tY, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor);
 //                        raster.getDataElements(trX, trY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, trX, trY, predictor2);
+                        RGBABuffer.getDataElements(raster, trX, trY, predictor2);
                         average2(predictor, predictor2);
 
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_AVG_L_TL_T_TR:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(lX, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor2);
                         average2(predictor, predictor2);
 
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
 //                        raster.getDataElements(trX, trY, predictor3);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, trX, trY, predictor3);
+                        RGBABuffer.getDataElements(raster, trX, trY, predictor3);
                         average2(predictor2, predictor3);
 
                         average2(predictor, predictor2);
@@ -223,35 +222,35 @@ public final class PredictorTransform implements Transform {
                         break;
                     case PREDICTOR_SELECT:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
 //                        raster.getDataElements(lX, tY, predictor3);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor3);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor3);
 
 
                         addPixels(rgba, select(predictor, predictor2, predictor3));
                         break;
                     case PREDICTOR_CLAMP_ADD_SUB_FULL:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
 //                        raster.getDataElements(lX, tY, predictor3);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor3);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor3);
                         clampAddSubtractFull(predictor, predictor2, predictor3);
 
                         addPixels(rgba, predictor);
                         break;
                     case PREDICTOR_CLAMP_ADD_SUB_HALF:
 //                        raster.getDataElements(lX, y, predictor);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, y, predictor);
+                        RGBABuffer.getDataElements(raster, lX, y, predictor);
 //                        raster.getDataElements(x, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, x, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, x, tY, predictor2);
                         average2(predictor, predictor2);
 
 //                        raster.getDataElements(lX, tY, predictor2);
-                        AwtJavaFxTranslator.getDataElementsAsByteArrayFromWritableImage(raster, lX, tY, predictor2);
+                        RGBABuffer.getDataElements(raster, lX, tY, predictor2);
                         clampAddSubtractHalf(predictor, predictor2);
 
                         addPixels(rgba, predictor);
@@ -260,7 +259,7 @@ public final class PredictorTransform implements Transform {
                 }
 
 //                raster.setDataElements(x, y, rgba);
-                AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+                RGBABuffer.setDataElements(raster, x, y, rgba);
             }
         }
     }

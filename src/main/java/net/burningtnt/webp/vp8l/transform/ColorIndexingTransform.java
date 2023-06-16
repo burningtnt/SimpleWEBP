@@ -31,8 +31,7 @@
 
 package net.burningtnt.webp.vp8l.transform;
 
-import javafx.scene.image.WritableImage;
-import net.burningtnt.webp.utils.AwtJavaFxTranslator;
+import net.burningtnt.webp.utils.RGBABuffer;
 
 /**
  * @author Simon Kammermeier
@@ -48,7 +47,7 @@ public final class ColorIndexingTransform implements Transform {
     }
 
     @Override
-    public void applyInverse(WritableImage raster) {
+    public void applyInverse(RGBABuffer raster) {
         int width = (int) raster.getWidth();
         int height = (int) raster.getHeight();
 
@@ -63,7 +62,7 @@ public final class ColorIndexingTransform implements Transform {
                 int componentOffset = componentSize * (x % packed);
 
 //                int sample = raster.getSample(xC, y, 1);
-                int sample = AwtJavaFxTranslator.getSampleAsIntFromWritableImage(raster, xC, y, 1);
+                int sample = RGBABuffer.getSampleAsIntFromWritableImage(raster, xC, y, 1);
 
                 int index = sample >> componentOffset & ((1 << componentSize) - 1);
 
@@ -75,7 +74,7 @@ public final class ColorIndexingTransform implements Transform {
                 // rgba[3] = colorTable[index * 4 + 3];
 
                 // raster.setDataElements(x, y, rgba);
-                AwtJavaFxTranslator.setDataElementsFromByteArrayToWritableImage(raster, x, y, rgba);
+                RGBABuffer.setDataElements(raster, x, y, rgba);
             }
         }
     }
