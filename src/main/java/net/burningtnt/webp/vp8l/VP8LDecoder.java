@@ -205,7 +205,7 @@ public final class VP8LDecoder {
                     // Crossed border into new metaGroup
 //                    int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 0);
                     // huffmanInfo.huffmanMetaCodes IntRaster
-                    int index = RGBABuffer.getSampleAsIntFromWritableImage(huffmanInfo.huffmanMetaCodes, x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
+                    int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
                     curCodeGroup = huffmanInfo.huffmanGroups[index];
                 }
 
@@ -224,7 +224,7 @@ public final class VP8LDecoder {
                     // Reset Huffman meta group
                     if (y < height && x < width && huffmanInfo.huffmanMetaCodes != null) {
 //                        int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 0);
-                        int index = RGBABuffer.getSampleAsIntFromWritableImage(huffmanInfo.huffmanMetaCodes, x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
+                        int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
                         curCodeGroup = huffmanInfo.huffmanGroups[index];
                     }
                 } else { // colorCache
@@ -243,7 +243,7 @@ public final class VP8LDecoder {
         rgba[3] = (byte) (argb >>> 24);
 
 //        raster.setDataElements(x, y, rgba);
-        RGBABuffer.setDataElements(raster, x, y, rgba);
+        raster.setDataElements(x, y, rgba);
     }
 
     private void decodeLiteral(RGBABuffer raster, ColorCache colorCache, HuffmanCodeGroup curCodeGroup, byte[] rgba, int y, int x, short code) throws IOException {
@@ -256,7 +256,7 @@ public final class VP8LDecoder {
         rgba[2] = blue;
         rgba[3] = alpha;
 //        raster.setDataElements(x, y, rgba);
-        RGBABuffer.setDataElements(raster, x, y, rgba);
+        raster.setDataElements(x, y, rgba);
 
         if (colorCache != null) {
             colorCache.insert((alpha & 0xff) << 24 | (red & 0xff) << 16 | (code & 0xff) << 8 | (blue & 0xff));
@@ -298,9 +298,10 @@ public final class VP8LDecoder {
             }
 
 //            raster.getDataElements(xSrc++, ySrc, rgba);
-            RGBABuffer.getDataElements(raster, xSrc++, ySrc, rgba);
-//            raster.setDataElements(x, y, rgba);
-            RGBABuffer.setDataElements(raster, x, y, rgba);
+            int x1 = xSrc++;
+            raster.getDataElements(x1, ySrc, rgba);
+            //            raster.setDataElements(x, y, rgba);
+            raster.setDataElements(x, y, rgba);
 
             if (xSrc == width) {
                 xSrc = 0;
@@ -379,18 +380,18 @@ public final class VP8LDecoder {
                 // assuming a height of one pixel and a width of
                 // color_table_size. The color table is always
                 // subtraction-coded to reduce image entropy.
-                RGBABuffer colorTableWritableImage = RGBABuffer.createAbsoluteImage(colorTableSize, 1);
+                RGBABuffer colorTableRGBABuffer = RGBABuffer.createAbsoluteImage(colorTableSize, 1);
                 readVP8Lossless(
 //                        Raster.createInterleavedRaster(
 //                                new DataBufferByte(colorTable, colorTableSize * 4),
 //                                colorTableSize, 1, colorTableSize * 4, 4, new int[]{0, 1, 2, 3}, null),
-                        colorTableWritableImage,
+                        colorTableRGBABuffer,
                         false, colorTableSize, 1);
 
-                byte[] colorTableWritableImageBuffer = new byte[4];
+                byte[] colorTableRGBACopyBuffer = new byte[4];
                 for (int x = 0; x < colorTableSize; x++) {
-                    RGBABuffer.getDataElements(colorTableWritableImage, x, 0, colorTableWritableImageBuffer);
-                    System.arraycopy(colorTableWritableImageBuffer, 0, colorTable, x * 4, 4);
+                    colorTableRGBABuffer.getDataElements(x, 0, colorTableRGBACopyBuffer);
+                    System.arraycopy(colorTableRGBACopyBuffer, 0, colorTable, x * 4, 4);
                 }
 
                 // resolve subtraction code
@@ -447,7 +448,7 @@ public final class VP8LDecoder {
 //            }
             for (int x = 0; x < packedRaster.getWidth(); x++) {
                 for (int y = 0; y < packedRaster.getHeight(); y++) {
-                    maxCode = Math.max(maxCode, RGBABuffer.getSampleAsIntFromWritableImage(packedRaster, x, y, 1));
+                    maxCode = Math.max(maxCode, packedRaster.getSample(x, y, 1));
                 }
             }
             huffmanGroupNum = maxCode + 1;

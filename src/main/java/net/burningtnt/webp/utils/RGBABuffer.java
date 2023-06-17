@@ -24,12 +24,6 @@ public final class RGBABuffer {
         }
     }
 
-    public static int getSampleAsIntFromWritableImage(RGBABuffer writableImage, int x, int y, int sample) {
-        byte[] rgba = new byte[4];
-        getDataElements(writableImage, x, y, rgba);
-        return rgba[sample];
-    }
-
     public int getWidth() {
         return this.w;
     }
@@ -74,11 +68,15 @@ public final class RGBABuffer {
         }
     }
 
-    public static void getDataElements(RGBABuffer rgbaBuffer, int x, int y, byte[] rgba) {
-        rgbaBuffer.getDataElements(x, y, rgba);
-    }
+    public byte getSample(int x, int y, int sample) {
+        if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
+            throw new IndexOutOfBoundsException(String.format("Pixel (%d, %d) is out of (%d, %d)", x, y, this.w, this.h));
+        }
 
-    public static void setDataElements(RGBABuffer rgbaBuffer, int x, int y, byte[] rgba) {
-        rgbaBuffer.setDataElements(x, y, rgba);
+        if (this.parent == null) {
+            return this.data[this.w * y * 4 + x * 4 + sample];
+        } else {
+            return this.parent.getSample(x + this.x, y + this.y, sample);
+        }
     }
 }

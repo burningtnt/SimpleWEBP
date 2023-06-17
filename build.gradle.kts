@@ -83,14 +83,13 @@ checkstyle {
     sourceSets = mutableSetOf()
 }
 
-tasks.getByName<Test>("test") {
+tasks.test {
     useJUnitPlatform()
 }
 
 tasks.withType<GenerateModuleMetadata> {
     enabled = false
 }
-
 
 tasks.getByName("build") {
     dependsOn(tasks.getByName("checkstyleMain"))

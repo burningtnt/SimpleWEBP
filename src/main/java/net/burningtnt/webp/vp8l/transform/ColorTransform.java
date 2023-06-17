@@ -55,14 +55,14 @@ public final class ColorTransform implements Transform {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 // data.getDataElements(x >> bits, y >> bits, rgba);
-                RGBABuffer.getDataElements(data, x >> bits, y >> bits, rgba);
-//                ColorTransformElement trans = new ColorTransformElement(rgba);
+                data.getDataElements(x >> bits, y >> bits, rgba);
+                //                ColorTransformElement trans = new ColorTransformElement(rgba);
                 int green_to_red = rgba[2];
                 int green_to_blue = rgba[1];
                 int red_to_blue = rgba[0];
 
                 // raster.getDataElements(x, y, rgba);
-                RGBABuffer.getDataElements(raster, x, y, rgba);
+                raster.getDataElements(x, y, rgba);
 
 //                trans.inverseTransform(rgba);
                 int tmp_red = rgba[0];
@@ -76,7 +76,7 @@ public final class ColorTransform implements Transform {
                 rgba[2] = (byte) (tmp_blue & 0xff);
 
                 // raster.setDataElements(x, y, rgba);
-                RGBABuffer.setDataElements(raster, x, y, rgba);
+                raster.setDataElements(x, y, rgba);
             }
         }
     }

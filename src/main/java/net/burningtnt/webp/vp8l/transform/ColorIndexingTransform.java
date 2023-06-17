@@ -62,7 +62,7 @@ public final class ColorIndexingTransform implements Transform {
                 int componentOffset = componentSize * (x % packed);
 
 //                int sample = raster.getSample(xC, y, 1);
-                int sample = RGBABuffer.getSampleAsIntFromWritableImage(raster, xC, y, 1);
+                int sample = raster.getSample(xC, y, 1);
 
                 int index = sample >> componentOffset & ((1 << componentSize) - 1);
 
@@ -74,7 +74,7 @@ public final class ColorIndexingTransform implements Transform {
                 // rgba[3] = colorTable[index * 4 + 3];
 
                 // raster.setDataElements(x, y, rgba);
-                RGBABuffer.setDataElements(raster, x, y, rgba);
+                raster.setDataElements(x, y, rgba);
             }
         }
     }
