@@ -24,7 +24,7 @@ public final class LSBBitInputStream {
         }
     }
 
-    public long readBits(int bits) throws IOException {
+    public long readBits(int bits) {
         if (bits <= 56) {
             if (!used) {
                 refillBuffer();
@@ -58,7 +58,7 @@ public final class LSBBitInputStream {
         return (int) readBits(1);
     }
 
-    private void refillBuffer() throws IOException {
+    private void refillBuffer() {
         for (; bitOffset >= 8; bitOffset -= 8) {
             byte readByte = (byte) inputStream.read();
             buffer = ((long) readByte << 56) | buffer >>> 8;

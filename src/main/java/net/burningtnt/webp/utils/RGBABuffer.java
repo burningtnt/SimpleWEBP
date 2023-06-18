@@ -44,6 +44,7 @@ public final class RGBABuffer {
         return new RGBABuffer(x, y, w, h, parent);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void getDataElements(int x, int y, byte[] rgba) {
         if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
             throw new IndexOutOfBoundsException(String.format("Pixel (%d, %d) is out of (%d, %d)", x, y, this.w, this.h));
@@ -56,6 +57,7 @@ public final class RGBABuffer {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void setDataElements(int x, int y, byte[] rgba) {
         if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
             throw new IndexOutOfBoundsException(String.format("Pixel (%d, %d) is out of (%d, %d)", x, y, this.w, this.h));
@@ -68,6 +70,7 @@ public final class RGBABuffer {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public byte getSample(int x, int y, int sample) {
         if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
             throw new IndexOutOfBoundsException(String.format("Pixel (%d, %d) is out of (%d, %d)", x, y, this.w, this.h));

@@ -8,7 +8,7 @@ public final class Example {
     private Example() {
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         try {
             byte[] rgbaImageData = VP8LDecoder.decodeStream(Example.class.getResourceAsStream("example.webp")).getData();
         } catch (IOException e) {

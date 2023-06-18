@@ -62,10 +62,6 @@ public final class SimpleWebpTest {
 
     private static String current = null;
 
-    public static String getCurrent() {
-        return current;
-    }
-
     @Test
     public void main() throws Exception {
         main(new String[]{});
@@ -84,7 +80,7 @@ public final class SimpleWebpTest {
             Files.deleteIfExists(outputFile.toPath());
 
             new PNGWriter(Files.newOutputStream(outputFile.toPath()), PNGType.RGBA, PNGWriter.DEFAULT_COMPRESS_LEVEL).write(
-                    new ArgbImageWrapper<Image>(inputImage, (int) inputImage.getWidth(), (int) inputImage.getHeight()) {
+                    new ArgbImageWrapper<>(inputImage, (int) inputImage.getWidth(), (int) inputImage.getHeight()) {
                         private final PixelReader pixelReader = inputImage.getPixelReader();
 
                         @Override

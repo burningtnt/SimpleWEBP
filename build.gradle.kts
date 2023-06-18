@@ -1,3 +1,8 @@
+import java.io.FileOutputStream
+import java.util.zip.ZipOutputStream
+import java.util.zip.ZipFile
+
+
 buildscript {
     repositories { mavenCentral() }
 
@@ -23,6 +28,10 @@ java {
     withSourcesJar()
 }
 
+repositories {
+    mavenCentral()
+}
+
 val javadocJar = tasks.create<Jar>("javadocJar") {
     group = "build"
     archiveClassifier.set("javadoc")
@@ -36,13 +45,16 @@ tasks.compileJava {
 }
 
 tasks.test {
-    jvmArgs!!.addAll(listOf(
-        "--add-opens=java.base/java.io"
-    ))
+    jvmArgs!!.addAll(
+        listOf(
+            "--add-opens=java.base/java.io"
+        )
+    )
 }
 
 tasks.create<Task>("generateModuleInfo") {
     dependsOn(tasks.compileJava)
+    group = "build"
 
     val outputFile = File(project.buildDir, "module-info/module-info.class")
 
@@ -75,10 +87,6 @@ tasks.processResources {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 checkstyle {
     sourceSets = mutableSetOf()
 }
@@ -92,8 +100,41 @@ tasks.withType<GenerateModuleMetadata> {
 }
 
 tasks.getByName("build") {
-    dependsOn(tasks.getByName("checkstyleMain"))
-    dependsOn(tasks.getByName("checkstyleTest"))
+    dependsOn(tasks.getByName("checkstyleMain") {
+        group = "build"
+    })
+    dependsOn(tasks.getByName("checkstyleTest") {
+        group = "build"
+    })
+    dependsOn(tasks.create<Task>("lightJar") {
+        dependsOn(tasks.jar)
+        group = "build"
+
+        val inputFile = File(project.buildDir, "libs/${project.name}-${project.version}.jar")
+        val outputFile = File(project.buildDir, "libs/${project.name}-${project.version}-light.jar")
+
+        inputs.files.plus(inputFile)
+        outputs.files.plus(outputFile)
+
+        doLast {
+            ZipFile(inputFile).use { zipFile ->
+                ZipOutputStream(FileOutputStream(outputFile)).use { zipOutputStream ->
+                    val inputEntries = zipFile.entries()
+                    while (inputEntries.hasMoreElements()) {
+                        val inputEntry = inputEntries.nextElement()
+
+                        if (inputEntry.name.startsWith("META-INF/") || inputEntry.name == "module-info.class") {
+                            continue
+                        }
+
+                        zipOutputStream.putNextEntry(inputEntry)
+                        zipOutputStream.write(zipFile.getInputStream(inputEntry).readAllBytes())
+                        zipOutputStream.closeEntry()
+                    }
+                }
+            }
+        }
+    })
 }
 
 dependencies {
@@ -131,7 +172,9 @@ run {
         kala.platform.Architecture.X86_64 -> {}
         kala.platform.Architecture.X86 -> classifer += "-x86"
         kala.platform.Architecture.AARCH64 -> classifer += "-aarch64"
-        kala.platform.Architecture.ARM -> if (classifer == "linux") classifer = "linux-arm32-monocle" else return@run
+        kala.platform.Architecture.ARM -> if (classifer == "linux") classifer =
+            "linux-arm32-monocle" else return@run
+
         else -> return@run
     }
 

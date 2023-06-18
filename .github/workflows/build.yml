@@ -1,6 +1,6 @@
 name: Java CI
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
@@ -17,3 +17,10 @@ jobs:
         run: chmod +x ./gradlew
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -Dorg.gradle.parallel=true
+      - name: Get short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: SimpleWEBP-${{ env.SHORT_SHA }}
+          path: build/libs

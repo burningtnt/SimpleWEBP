@@ -203,7 +203,6 @@ public final class VP8LDecoder {
             for (int x = 0; x < width; x++) {
                 if ((x & huffmanMask) == 0 && huffmanInfo.huffmanMetaCodes != null) {
                     // Crossed border into new metaGroup
-//                    int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 0);
                     // huffmanInfo.huffmanMetaCodes IntRaster
                     int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
                     curCodeGroup = huffmanInfo.huffmanGroups[index];
@@ -223,7 +222,6 @@ public final class VP8LDecoder {
 
                     // Reset Huffman meta group
                     if (y < height && x < width && huffmanInfo.huffmanMetaCodes != null) {
-//                        int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 0);
                         int index = huffmanInfo.huffmanMetaCodes.getSample(x >> huffmanInfo.metaCodeBits, y >> huffmanInfo.metaCodeBits, 1);
                         curCodeGroup = huffmanInfo.huffmanGroups[index];
                     }
@@ -241,8 +239,6 @@ public final class VP8LDecoder {
         rgba[1] = (byte) ((argb >> 8) & 0xff);
         rgba[2] = (byte) (argb & 0xff);
         rgba[3] = (byte) (argb >>> 24);
-
-//        raster.setDataElements(x, y, rgba);
         raster.setDataElements(x, y, rgba);
     }
 
@@ -255,7 +251,6 @@ public final class VP8LDecoder {
         rgba[1] = (byte) code;
         rgba[2] = blue;
         rgba[3] = alpha;
-//        raster.setDataElements(x, y, rgba);
         raster.setDataElements(x, y, rgba);
 
         if (colorCache != null) {
@@ -296,11 +291,8 @@ public final class VP8LDecoder {
                 x = 0;
                 y++;
             }
-
-//            raster.getDataElements(xSrc++, ySrc, rgba);
             int x1 = xSrc++;
             raster.getDataElements(x1, ySrc, rgba);
-            //            raster.setDataElements(x, y, rgba);
             raster.setDataElements(x, y, rgba);
 
             if (xSrc == width) {
@@ -330,8 +322,6 @@ public final class VP8LDecoder {
     private int readTransform(int xSize, int ySize, List<Transform> transforms) throws IOException {
         int transformType = (int) lsbBitReader.readBits(2);
 
-        // TODO: Each transform type can only be present once in the stream.
-
         switch (transformType) {
             case PREDICTOR_TRANSFORM:
                 // Intentional Fallthrough
@@ -343,8 +333,7 @@ public final class VP8LDecoder {
                 int blockWidth = subSampleSize(xSize, sizeBits);
                 int blockHeight = subSampleSize(ySize, sizeBits);
                 RGBABuffer raster =
-//                        Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, blockWidth, blockHeight, 4 * blockWidth, 4,
-//                                new int[]{0, 1, 2, 3}, null);
+//                        Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, blockWidth, blockHeight, 4 * blockWidth, 4, new int[]{0, 1, 2, 3}, null);
                         RGBABuffer.createAbsoluteImage(blockWidth, blockHeight);
                 readVP8Lossless(raster, false, blockWidth, blockHeight);
 
@@ -407,7 +396,6 @@ public final class VP8LDecoder {
                 xSize = subSampleSize(xSize, widthBits);
 
                 // The colors components are stored in ARGB order at 4*index, 4*index + 1, 4*index + 2, 4*index + 3
-                // TODO: Can we use this to produce an image with IndexColorModel instead of expanding the values in-memory?
                 transforms.add(0, new ColorIndexingTransform(colorTable, widthBits));
 
                 break;
@@ -440,12 +428,8 @@ public final class VP8LDecoder {
                     RGBABuffer.createAbsoluteImage(huffmanXSize, huffmanYSize);
             readVP8Lossless(packedRaster, false, huffmanXSize, huffmanYSize);
 
-//            int[] data = ((DataBufferInt) packedRaster.getDataBuffer()).getData();
             // Max metaGroup is number of meta groups
             int maxCode = Integer.MIN_VALUE;
-//            for (int code : data) {
-//                maxCode = Math.max(maxCode, code & 0xffff);
-//            }
             for (int x = 0; x < packedRaster.getWidth(); x++) {
                 for (int y = 0; y < packedRaster.getHeight(); y++) {
                     maxCode = Math.max(maxCode, packedRaster.getSample(x, y, 1));

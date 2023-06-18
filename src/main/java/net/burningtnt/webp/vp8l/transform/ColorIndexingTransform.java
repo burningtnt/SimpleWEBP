@@ -48,8 +48,8 @@ public final class ColorIndexingTransform implements Transform {
 
     @Override
     public void applyInverse(RGBABuffer raster) {
-        int width = (int) raster.getWidth();
-        int height = (int) raster.getHeight();
+        int width = raster.getWidth();
+        int height = raster.getHeight();
 
         byte[] rgba = new byte[4];
 
@@ -61,19 +61,11 @@ public final class ColorIndexingTransform implements Transform {
                 int xC = x / packed;
                 int componentOffset = componentSize * (x % packed);
 
-//                int sample = raster.getSample(xC, y, 1);
                 int sample = raster.getSample(xC, y, 1);
 
                 int index = sample >> componentOffset & ((1 << componentSize) - 1);
 
-                // Arraycopy for 4 elements might not be beneficial
                 System.arraycopy(colorTable, index * 4, rgba, 0, 4);
-                // rgba[0] = colorTable[index * 4];
-                // rgba[1] = colorTable[index * 4 + 1];
-                // rgba[2] = colorTable[index * 4 + 2];
-                // rgba[3] = colorTable[index * 4 + 3];
-
-                // raster.setDataElements(x, y, rgba);
                 raster.setDataElements(x, y, rgba);
             }
         }

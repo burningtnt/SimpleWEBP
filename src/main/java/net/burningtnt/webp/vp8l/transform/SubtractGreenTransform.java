@@ -45,17 +45,15 @@ public final class SubtractGreenTransform implements Transform {
 
     @Override
     public void applyInverse(RGBABuffer raster) {
-        int width = (int) raster.getWidth();
-        int height = (int) raster.getHeight();
+        int width = raster.getWidth();
+        int height = raster.getHeight();
 
         byte[] rgba = new byte[4];
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-//                raster.getDataElements(x, y, rgba);
                 raster.getDataElements(x, y, rgba);
                 addGreenToBlueAndRed(rgba);
-//                raster.setDataElements(x, y, rgba);
                 raster.setDataElements(x, y, rgba);
             }
         }

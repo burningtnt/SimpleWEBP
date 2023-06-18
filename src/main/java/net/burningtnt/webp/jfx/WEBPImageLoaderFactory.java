@@ -5,7 +5,6 @@ import com.sun.javafx.iio.ImageLoader;
 import com.sun.javafx.iio.ImageLoaderFactory;
 import com.sun.javafx.iio.ImageStorage;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
@@ -20,7 +19,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     }
 
     @Override
-    public ImageLoader createImageLoader(InputStream input) throws IOException {
+    public ImageLoader createImageLoader(InputStream input) {
         return new WEBPImageLoader(input);
     }
 
