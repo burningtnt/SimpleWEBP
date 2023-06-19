@@ -37,10 +37,18 @@ public final class RGBABuffer {
     }
 
     public static RGBABuffer createAbsoluteImage(int w, int h) {
+        if (((long)w) * ((long)h) * 4L > Integer.MAX_VALUE) {
+            throw new IndexOutOfBoundsException("Image is too big.");
+        }
+
         return new RGBABuffer(0, 0, w, h, null);
     }
 
     public static RGBABuffer createChildImage(RGBABuffer parent, int x, int y, int w, int h) {
+        if (x < 0 || y < 0 || w < 0 || h < 0 || x > parent.w || y > parent.h || x + w > parent.w || y + h > parent.h) {
+            throw new IndexOutOfBoundsException(String.format("Image (%d, %d, %d, %d) is out of (%d, %d)", x, y, w, h, parent.w, parent.h));
+        }
+
         return new RGBABuffer(x, y, w, h, parent);
     }
 
