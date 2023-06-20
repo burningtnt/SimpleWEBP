@@ -92,19 +92,7 @@ public final class VP8LDecoder {
     }
 
     public static RGBABuffer decodeStream(InputStream inputStream) throws IOException {
-        ByteArrayInputStream byteArrayInputStream;
-        if (inputStream instanceof ByteArrayInputStream) {
-            byteArrayInputStream = (ByteArrayInputStream) inputStream;
-        } else {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[8192];
-            int read;
-            while ((read = inputStream.read(buffer, 0, 8192)) >= 0) {
-                byteArrayOutputStream.write(buffer, 0, read);
-            }
-            byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        }
-
+        ByteArrayInputStream byteArrayInputStream = LSBBitInputStream.copyAsByteArrayInputStream(inputStream);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         if (dataInputStream.readInt() != RIFF_MAGIC) {

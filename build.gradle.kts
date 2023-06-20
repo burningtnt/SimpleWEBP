@@ -45,11 +45,22 @@ tasks.compileJava {
 }
 
 tasks.test {
-    jvmArgs!!.addAll(
-        listOf(
-            "--add-opens=java.base/java.io"
-        )
-    )
+    jvmArgs("--illegal-access=deny")
+
+    listOf(
+        "javafx.graphics/com.sun.javafx.iio",
+        "javafx.graphics/com.sun.javafx.iio.common"
+    ).forEach { string ->
+        jvmArgs("--add-exports", "${string}=ALL-UNNAMED")
+    }
+
+    listOf(
+        "java.base/java.io",
+    ).forEach { string ->
+        jvmArgs("--add-opens", "${string}=ALL-UNNAMED")
+    }
+
+    println(jvmArgs)
 }
 
 tasks.create<Task>("generateModuleInfo") {
