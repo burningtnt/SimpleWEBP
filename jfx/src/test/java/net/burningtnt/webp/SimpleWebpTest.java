@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Objects;
 
 public final class SimpleWebpTest {
     private SimpleWebpTest() {
@@ -73,8 +74,8 @@ public final class SimpleWebpTest {
         for (String input : inputs) {
             current = input;
 
-            Image inputImage = new Image(Files.newInputStream(new File(String.format("src/test/resources/inputs/%s.webp", current)).getAbsoluteFile().toPath()));
-            Image desiresImage = new Image(Files.newInputStream(new File(String.format("src/test/resources/desires/%s.png", current)).getAbsoluteFile().toPath()));
+            Image inputImage = new Image(Objects.requireNonNull(SimpleWebpTest.class.getResourceAsStream(String.format("/inputs/%s.webp", current))));
+            Image desiresImage = new Image(Objects.requireNonNull(SimpleWebpTest.class.getResourceAsStream(String.format("/desires/%s.png", current))));
 
             File outputFile = new File(String.format("build/tmp/test/%s.png", current)).getAbsoluteFile();
             Files.deleteIfExists(outputFile.toPath());
