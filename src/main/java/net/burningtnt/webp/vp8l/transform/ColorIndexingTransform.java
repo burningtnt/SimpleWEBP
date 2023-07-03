@@ -37,7 +37,6 @@ import net.burningtnt.webp.utils.RGBABuffer;
  * @author Simon Kammermeier
  */
 public final class ColorIndexingTransform implements Transform {
-
     private final byte[] colorTable;
     private final byte bits;
 
@@ -47,7 +46,7 @@ public final class ColorIndexingTransform implements Transform {
     }
 
     @Override
-    public void applyInverse(RGBABuffer raster) {
+    public void apply(RGBABuffer raster) {
         int width = raster.getWidth();
         int height = raster.getHeight();
 

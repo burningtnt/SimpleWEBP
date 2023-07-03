@@ -46,7 +46,7 @@ public final class ColorTransform implements Transform {
     }
 
     @Override
-    public void applyInverse(RGBABuffer raster) {
+    public void apply(RGBABuffer raster) {
         int width = raster.getWidth();
         int height = raster.getHeight();
 
@@ -55,13 +55,11 @@ public final class ColorTransform implements Transform {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 data.getDataElements(x >> bits, y >> bits, rgba);
-                //                ColorTransformElement trans = new ColorTransformElement(rgba);
                 int green_to_red = rgba[2];
                 int green_to_blue = rgba[1];
                 int red_to_blue = rgba[0];
                 raster.getDataElements(x, y, rgba);
 
-//                trans.inverseTransform(rgba);
                 int tmp_red = rgba[0];
                 int tmp_blue = rgba[2];
 

@@ -65,7 +65,6 @@ import java.util.List;
  * @author Simon Kammermeier
  */
 public final class HuffmanTable {
-
     private static final int LEVEL1_BITS = 8;
     /**
      * Symbols of the L-code in the order they need to be read
@@ -96,12 +95,10 @@ public final class HuffmanTable {
                     level1[i] = 1 << 16 | symbol1;
                     level1[i + 1] = 1 << 16 | symbol2;
                 }
-            }
-            else {
+            } else {
                 Arrays.fill(level1, symbol1);
             }
-        }
-        else {
+        } else {
             // code lengths also huffman coded
             // first read the "first stage" code lengths
             // In the following this is called the L-Code (for length code)
@@ -188,8 +185,7 @@ public final class HuffmanTable {
                 for (int j = code; j < level1.length; j += 1 << length) {
                     level1[j] = lengthAndSymbol;
                 }
-            }
-            else {
+            } else {
                 // Existing level2 table not fitting
                 if ((code & ((1 << LEVEL1_BITS) - 1)) != rootEntry) {
                     // Figure out needed table size.
@@ -262,8 +258,7 @@ public final class HuffmanTable {
         if (lsbBitReader.readBit() == 1) {
             int maxSymbolBitLength = (int) (2 + 2 * lsbBitReader.readBits(3));
             codedSymbols = (int) (2 + lsbBitReader.readBits(maxSymbolBitLength));
-        }
-        else {
+        } else {
             codedSymbols = alphabetSize;
         }
 
@@ -280,8 +275,7 @@ public final class HuffmanTable {
                 if (len != 0) {
                     prevLength = len;
                 }
-            }
-            else {
+            } else {
                 short repeatSymbol = 0;
                 int extraBits;
                 int repeatOffset;

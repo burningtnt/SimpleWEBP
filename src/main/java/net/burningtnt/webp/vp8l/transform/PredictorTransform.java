@@ -37,11 +37,6 @@ import net.burningtnt.webp.utils.RGBABuffer;
  * @author Simon Kammermeier
  */
 public final class PredictorTransform implements Transform {
-    /**
-     * PREDICTOR_
-     *
-     * @author <a href="mailto:harald.kuhr@gmail.com">Harald Kuhr</a>
-     */
     // Special rules:
     // Top-left pixel of image is predicted BLACK
     // Rest of top pixels is predicted L
@@ -72,7 +67,7 @@ public final class PredictorTransform implements Transform {
     }
 
     @Override
-    public void applyInverse(RGBABuffer raster) {
+    public void apply(RGBABuffer raster) {
         int width = raster.getWidth();
         int height = raster.getHeight();
 

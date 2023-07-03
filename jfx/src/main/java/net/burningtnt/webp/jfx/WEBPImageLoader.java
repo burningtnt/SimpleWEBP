@@ -29,7 +29,7 @@ public class WEBPImageLoader extends ImageLoaderImpl {
 
         return new ImageFrame(
                 ImageStorage.ImageType.RGBA,
-                ByteBuffer.wrap(rgbaBuffer.getData()),
+                ByteBuffer.wrap(rgbaBuffer.getRGBAData()),
                 rgbaBuffer.getWidth(), rgbaBuffer.getHeight(),
                 rgbaBuffer.getWidth() * 4, null,
                 new ImageMetadata(

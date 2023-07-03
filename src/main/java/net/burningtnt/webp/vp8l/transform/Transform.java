@@ -39,5 +39,5 @@ import net.burningtnt.webp.utils.RGBABuffer;
  * @author <a href="mailto:harald.kuhr@gmail.com">Harald Kuhr</a>
  */
 public interface Transform {
-    void applyInverse(RGBABuffer raster);
+    void apply(RGBABuffer raster);
 }

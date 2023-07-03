@@ -90,6 +90,8 @@ tasks.getByName("build") {
 }
 
 dependencies {
+    compileOnly("org.jetbrains:annotations:24.0.1")
+
     testImplementation(project)
 }
 

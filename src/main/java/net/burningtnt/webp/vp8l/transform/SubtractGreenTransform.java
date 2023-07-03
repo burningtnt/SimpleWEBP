@@ -37,14 +37,8 @@ import net.burningtnt.webp.utils.RGBABuffer;
  * @author Simon Kammermeier
  */
 public final class SubtractGreenTransform implements Transform {
-
-    private static void addGreenToBlueAndRed(byte[] rgb) {
-        rgb[0] = (byte) ((rgb[0] + rgb[1]) & 0xff);
-        rgb[2] = (byte) ((rgb[2] + rgb[1]) & 0xff);
-    }
-
     @Override
-    public void applyInverse(RGBABuffer raster) {
+    public void apply(RGBABuffer raster) {
         int width = raster.getWidth();
         int height = raster.getHeight();
 
@@ -57,5 +51,10 @@ public final class SubtractGreenTransform implements Transform {
                 raster.setDataElements(x, y, rgba);
             }
         }
+    }
+
+    private static void addGreenToBlueAndRed(byte[] rgb) {
+        rgb[0] = (byte) ((rgb[0] + rgb[1]) & 0xff);
+        rgb[2] = (byte) ((rgb[2] + rgb[1]) & 0xff);
     }
 }

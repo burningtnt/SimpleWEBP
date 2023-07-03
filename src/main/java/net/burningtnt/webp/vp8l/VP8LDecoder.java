@@ -31,6 +31,7 @@
 
 package net.burningtnt.webp.vp8l;
 
+import net.burningtnt.webp.utils.Accessor;
 import net.burningtnt.webp.utils.LSBBitInputStream;
 import net.burningtnt.webp.utils.RGBABuffer;
 import net.burningtnt.webp.vp8l.colorcache.ColorCache;
@@ -49,11 +50,6 @@ import java.util.List;
  * @author Simon Kammermeier
  */
 public final class VP8LDecoder {
-    /**
-     * TransformType.
-     *
-     * @author <a href="mailto:harald.kuhr@gmail.com">Harald Kuhr</a>
-     */
     private static final int PREDICTOR_TRANSFORM = 0;
     private static final int COLOR_TRANSFORM = 1;
     private static final int SUBTRACT_GREEN_TRANSFORM = 2;
@@ -92,7 +88,7 @@ public final class VP8LDecoder {
     }
 
     public static RGBABuffer decodeStream(InputStream inputStream) throws IOException {
-        ByteArrayInputStream byteArrayInputStream = LSBBitInputStream.copyAsByteArrayInputStream(inputStream);
+        ByteArrayInputStream byteArrayInputStream = Accessor.dupeInputStreamAsByteArrayInputStream(inputStream);
         DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
 
         if (dataInputStream.readInt() != RIFF_MAGIC) {
@@ -174,7 +170,7 @@ public final class VP8LDecoder {
         decodeImage(decodeRaster, huffmanInfo, colorCache);
 
         for (Transform transform : transforms) {
-            transform.applyInverse(raster);
+            transform.apply(raster);
         }
     }
 
@@ -389,7 +385,7 @@ public final class VP8LDecoder {
                 break;
             }
             default:
-                throw new AssertionError("Invalid transformType: " + transformType);
+                throw new IOException("Invalid transformType: " + transformType);
         }
 
         return xSize;

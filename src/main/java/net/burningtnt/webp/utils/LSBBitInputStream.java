@@ -1,53 +1,8 @@
 package net.burningtnt.webp.utils;
 
 import java.io.*;
-import java.lang.reflect.Field;
 
 public final class LSBBitInputStream {
-    public static Object getDeclaredFieldAsObject(Object object, String name) {
-        try {
-            Field field = object.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static int getDeclaredFieldAsInt(Object object, String name) {
-        try {
-            Field field = object.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            return field.getInt(object);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static ByteArrayInputStream copyAsByteArrayInputStream(InputStream inputStream) {
-        if (inputStream instanceof ByteArrayInputStream) {
-            byte[] buffer = (byte[]) getDeclaredFieldAsObject(inputStream, "buf");
-            int pos = getDeclaredFieldAsInt(inputStream, "pos");
-            return new ByteArrayInputStream(buffer, pos, buffer.length);
-        } else {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-            try {
-                byte[] buffer = new byte[8192];
-                int read;
-                while ((read = inputStream.read(buffer, 0, 8192)) >= 0) {
-                    byteArrayOutputStream.write(buffer, 0, read);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            byte[] buffer = (byte[]) getDeclaredFieldAsObject(byteArrayOutputStream, "buf");
-            int size = getDeclaredFieldAsInt(byteArrayOutputStream, "count");
-            return new ByteArrayInputStream(buffer, 0, size);
-        }
-    }
-
     private final ByteArrayInputStream inputStream;
     private int bitOffset = 64;
     private long buffer;
@@ -87,7 +42,7 @@ public final class LSBBitInputStream {
         }
     }
 
-    public int readBit() throws IOException {
+    public int readBit() {
         return (int) readBits(1);
     }
 
