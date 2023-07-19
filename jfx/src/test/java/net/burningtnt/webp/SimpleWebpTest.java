@@ -102,7 +102,6 @@ public final class SimpleWebpTest {
 
         for (int y = 0; y < (int) inputImage.getHeight(); y++) {
             for (int x = 0; x < (int) inputImage.getWidth(); x++) {
-
                 if (inputReader.getArgb(x, y) != desireReader.getArgb(x, y)) {
                     Assertions.fail(String.format(
                             "[Test point #%s] Illegal pixel at [%d, %d], expected 0x%08x but found 0x%08x", current, x, y,
