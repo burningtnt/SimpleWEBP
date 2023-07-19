@@ -7,23 +7,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumMap;
 
-public enum WEBPImageLoader {
+public enum SimpleWEBPLoader {
     VP8L(VP8LDecoder::decodeStream);
 
     public static RGBABuffer decodeStreamByImageLoaders(InputStream inputStream) throws IOException {
-        EnumMap<WEBPImageLoader, IOException> errors = new EnumMap<>(WEBPImageLoader.class);
+        EnumMap<SimpleWEBPLoader, IOException> errors = new EnumMap<>(SimpleWEBPLoader.class);
 
-        for (WEBPImageLoader webpImageLoader : values()) {
+        for (SimpleWEBPLoader simpleWebpLoader : values()) {
             try {
-                return webpImageLoader.decodeStreamByCurrentImageLoader(inputStream);
+                return simpleWebpLoader.decodeStreamByCurrentImageLoader(inputStream);
             } catch (IOException e) {
-                errors.put(webpImageLoader, e);
+                errors.put(simpleWebpLoader, e);
             }
         }
 
         IOException e = new IOException(String.format("Fail to load image from %s because all the image loaders throw an IOException.", inputStream));
-        for (WEBPImageLoader webpImageLoader : values()) {
-            e.addSuppressed(new IOException(String.format("Image Loader %s throw an IOException", webpImageLoader.name()), errors.get(webpImageLoader)));
+        for (SimpleWEBPLoader simpleWebpLoader : values()) {
+            e.addSuppressed(new IOException(String.format("Image Loader %s throw an IOException", simpleWebpLoader.name()), errors.get(simpleWebpLoader)));
         }
         throw e;
     }
@@ -35,7 +35,7 @@ public enum WEBPImageLoader {
 
     private final LoadAction delegate;
 
-    WEBPImageLoader(LoadAction delegate) {
+    SimpleWEBPLoader(LoadAction delegate) {
         this.delegate = delegate;
     }
 

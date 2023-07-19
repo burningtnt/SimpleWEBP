@@ -2,7 +2,7 @@ package net.burningtnt.webp;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-import net.burningtnt.webp.jfx.JavaFxWEBPImageLoaderFactory;
+import net.burningtnt.webp.jfx.WEBPImageLoaderFactory;
 import org.glavo.png.PNGType;
 import org.glavo.png.PNGWriter;
 import org.glavo.png.image.ArgbImageWrapper;
@@ -67,7 +67,7 @@ public final class SimpleWebpTest {
 
     @Test
     public void main() throws IOException {
-        JavaFxWEBPImageLoaderFactory.setupListener();
+        WEBPImageLoaderFactory.setupListener();
 
         for (String input : inputs) {
             current = input;

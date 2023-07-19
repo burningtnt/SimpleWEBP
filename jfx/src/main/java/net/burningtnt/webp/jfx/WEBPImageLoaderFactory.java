@@ -7,20 +7,20 @@ import com.sun.javafx.iio.ImageStorage;
 
 import java.io.InputStream;
 
-public final class JavaFxWEBPImageLoaderFactory implements ImageLoaderFactory {
-    private static final JavaFxWEBPImageLoaderFactory instance = new JavaFxWEBPImageLoaderFactory();
+public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
+    private static final WEBPImageLoaderFactory instance = new WEBPImageLoaderFactory();
 
-    private JavaFxWEBPImageLoaderFactory() {
+    private WEBPImageLoaderFactory() {
     }
 
     @Override
     public ImageFormatDescription getFormatDescription() {
-        return JavaFxWEBPDescriptor.getInstance();
+        return WEBPDescriptor.getInstance();
     }
 
     @Override
     public ImageLoader createImageLoader(InputStream input) {
-        return new JavaFxWEBPImageLoader(input);
+        return new WEBPImageLoader(input);
     }
 
     public static void setupListener() {
