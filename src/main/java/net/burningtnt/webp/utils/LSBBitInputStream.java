@@ -2,7 +2,6 @@ package net.burningtnt.webp.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 public final class LSBBitInputStream {
     private final InputStream inputStream;
@@ -40,7 +39,7 @@ public final class LSBBitInputStream {
         if (bits <= 56) {
             return (buffer >>> bitOffset) & ((1L << bits) - 1);
         } else {
-            throw new UnsupportedEncodingException("Cannot peek over 56 bits");
+            throw new IOException("Cannot peek over 56 bits");
         }
     }
 
