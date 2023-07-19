@@ -31,7 +31,6 @@
 
 package net.burningtnt.webp.vp8l;
 
-import net.burningtnt.webp.utils.Accessor;
 import net.burningtnt.webp.utils.LSBBitInputStream;
 import net.burningtnt.webp.utils.RGBABuffer;
 import net.burningtnt.webp.vp8l.colorcache.ColorCache;
@@ -39,7 +38,10 @@ import net.burningtnt.webp.vp8l.huffman.HuffmanCodeGroup;
 import net.burningtnt.webp.vp8l.huffman.HuffmanInfo;
 import net.burningtnt.webp.vp8l.transform.*;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,9 +89,7 @@ public final class VP8LDecoder {
     }
 
     public static RGBABuffer decodeStream(InputStream inputStream) throws IOException {
-        ByteArrayInputStream byteArrayInputStream = Accessor.dupeInputStreamAsByteArrayInputStream(inputStream);
-        DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
-
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
         if (dataInputStream.readInt() != RIFF_MAGIC) {
             throw new IOException("Invalid RIFF_MAGIC.");
         }
@@ -100,18 +100,16 @@ public final class VP8LDecoder {
             throw new IOException("Invalid WEBP_MAGIC");
         }
 
-        int chunk = dataInputStream.readInt();
-        dataInputStream.readInt();
-
-        if (chunk != CHUNK_VP8L) {
+        if (dataInputStream.readInt() != CHUNK_VP8L) {
             throw new UnsupportedEncodingException("SimpleWEBP can only decode VP8L");
         }
+        dataInputStream.readInt();
 
         if (dataInputStream.readByte() != LOSSLESSS_SIG) {
             throw new IOException("Invalid LOSSLESS_SIG");
         }
 
-        LSBBitInputStream lsbBitInputStream = new LSBBitInputStream(byteArrayInputStream);
+        LSBBitInputStream lsbBitInputStream = new LSBBitInputStream(inputStream);
 
         int width = 1 + (int) lsbBitInputStream.readBits(14);
         int height = 1 + (int) lsbBitInputStream.readBits(14);

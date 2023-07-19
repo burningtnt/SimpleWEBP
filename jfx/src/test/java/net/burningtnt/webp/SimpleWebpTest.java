@@ -9,8 +9,10 @@ import org.glavo.png.image.ArgbImageWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public final class SimpleWebpTest {
@@ -64,11 +66,7 @@ public final class SimpleWebpTest {
     private static String current = null;
 
     @Test
-    public void main() throws Exception {
-        main(new String[]{});
-    }
-
-    public static void main(String[] args) throws Exception {
+    public void main() throws IOException {
         WEBPImageLoaderFactory.setupListener();
 
         for (String input : inputs) {
@@ -77,10 +75,10 @@ public final class SimpleWebpTest {
             Image inputImage = new Image(Objects.requireNonNull(SimpleWebpTest.class.getResourceAsStream(String.format("/inputs/%s.webp", current))));
             Image desiresImage = new Image(Objects.requireNonNull(SimpleWebpTest.class.getResourceAsStream(String.format("/desires/%s.png", current))));
 
-            File outputFile = new File(String.format("build/tmp/test/%s.png", current)).getAbsoluteFile();
-            Files.deleteIfExists(outputFile.toPath());
+            Path output = Paths.get("build/tmp/test", current + ".png").toAbsolutePath();
+            Files.deleteIfExists(output);
 
-            new PNGWriter(Files.newOutputStream(outputFile.toPath()), PNGType.RGBA, PNGWriter.DEFAULT_COMPRESS_LEVEL).write(
+            new PNGWriter(Files.newOutputStream(output), PNGType.RGBA, PNGWriter.DEFAULT_COMPRESS_LEVEL).write(
                     new ArgbImageWrapper<>(inputImage, (int) inputImage.getWidth(), (int) inputImage.getHeight()) {
                         private final PixelReader pixelReader = inputImage.getPixelReader();
 

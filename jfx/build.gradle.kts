@@ -57,12 +57,6 @@ tasks.test {
     ).forEach { string ->
         jvmArgs("--add-exports", "${string}=ALL-UNNAMED")
     }
-
-    listOf(
-        "java.base/java.io",
-    ).forEach { string ->
-        jvmArgs("--add-opens", "${string}=ALL-UNNAMED")
-    }
 }
 
 tasks.getByName("build") {

@@ -23,7 +23,7 @@ public final class RGBABuffer {
      */
     private final byte @Nullable [] rgbaData;
 
-    private RGBABuffer(int x, int y, int w, int h, RGBABuffer parent) {
+    private RGBABuffer(int x, int y, int w, int h, @Nullable RGBABuffer parent) {
         this.x = x;
         this.y = y;
         this.w = w;

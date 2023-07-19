@@ -1,18 +1,20 @@
 package net.burningtnt.webp.utils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 public final class LSBBitInputStream {
-    private final ByteArrayInputStream inputStream;
+    private final InputStream inputStream;
     private int bitOffset = 64;
     private long buffer;
     private boolean used = false;
 
-    public LSBBitInputStream(ByteArrayInputStream byteArrayInputStream) {
-        this.inputStream = byteArrayInputStream;
+    public LSBBitInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
-    public long readBits(int bits) {
+    public long readBits(int bits) throws IOException {
         if (bits <= 56) {
             if (!used) {
                 refillBuffer();
@@ -42,11 +44,11 @@ public final class LSBBitInputStream {
         }
     }
 
-    public int readBit() {
+    public int readBit() throws IOException {
         return (int) readBits(1);
     }
 
-    private void refillBuffer() {
+    private void refillBuffer() throws IOException {
         for (; bitOffset >= 8; bitOffset -= 8) {
             byte readByte = (byte) inputStream.read();
             buffer = ((long) readByte << 56) | buffer >>> 8;
