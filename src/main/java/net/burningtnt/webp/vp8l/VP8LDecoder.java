@@ -76,7 +76,6 @@ public final class VP8LDecoder {
 
     private static final int RIFF_MAGIC = 'R' << 24 | 'I' << 16 | 'F' << 8 | 'F';
     private static final int WEBP_MAGIC = 'W' << 24 | 'E' << 16 | 'B' << 8 | 'P';
-    private static final int CHUNK_VP8_ = 'V' << 24 | 'P' << 16 | '8' << 8 | ' ';
     private static final int CHUNK_VP8L = 'V' << 24 | 'P' << 16 | '8' << 8 | 'L';
 
     private static final byte LOSSLESSS_SIG = 0x2f;
