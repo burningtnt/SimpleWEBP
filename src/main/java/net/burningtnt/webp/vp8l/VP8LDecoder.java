@@ -157,7 +157,7 @@ public final class VP8LDecoder {
         RGBABuffer decodeRaster;
         if (topLevel) {
             // If multiple indices packed into one pixel xSize is different from raster width
-            decodeRaster = RGBABuffer.createChildImage(raster, 0, 0, xSize, height);
+            decodeRaster = RGBABuffer.createRelativeImage(raster, 0, 0, xSize, height);
         } else {
             // All recursive calls have Rasters of the correct sizes with origin (0, 0)
             decodeRaster = raster;
