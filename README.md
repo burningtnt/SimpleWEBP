@@ -72,19 +72,29 @@ implementation("com.github.burningtnt.SimpleWEBP:awt:%latest-commit-hash%")
 
 [`VP8LDeocder`](src/main/java/net/burningtnt/webp/vp8l/VP8LDecoder.java) is used to decode Webp.
 
-This is a simple example:
+This is a simple example to get the RGBA formatted image data:
 
 ```java
 public final class Example {
     private Example() {
     }
 
-    public static void main(String[] args) {
-        try {
-            byte[] rgbaImageData = VP8LDecoder.decodeStream(Example.class.getResourceAsStream("example.webp")).getData();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static void main(String[] args) throws IOException {
+        RGBABuffer rgbaBuffer = SimpleWEBPLoader.decodeStreamByImageLoaders(Example.class.getResourceAsStream("example.webp"));
+    }
+}
+```
+
+If you want to use it in JavaFX, you can install the [`WEBPImageLoader`](jfx/src/main/java/net/burningtnt/webp/jfx/WEBPImageLoaderFactory.java):
+
+```java
+public final class JavaFXExample {
+    private JavaFXExample() {
+    }
+    
+    public static void main(String[] args) throws IOException {
+        WEBPImageLoaderFactory.setupListener();
+        RGBABuffer rgbaBuffer = new Image(Example.class.getResourceAsStream("example.webp"));
     }
 }
 ```
