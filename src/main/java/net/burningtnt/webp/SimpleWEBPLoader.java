@@ -5,41 +5,40 @@ import net.burningtnt.webp.vp8l.VP8LDecoder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.EnumMap;
 
 public enum SimpleWEBPLoader {
-    VP8L(VP8LDecoder::decodeStream);
+    VP8L {
+        @Override
+        public RGBABuffer decode(InputStream inputStream) throws IOException {
+            return VP8LDecoder.decodeStream(inputStream);
+        }
+    };
+
+    public abstract RGBABuffer decode(InputStream inputStream) throws IOException;
+
+    private static final int length = values().length;
+    private static final SimpleWEBPLoader[] values = values();
 
     public static RGBABuffer decodeStreamByImageLoaders(InputStream inputStream) throws IOException {
-        EnumMap<SimpleWEBPLoader, IOException> errors = new EnumMap<>(SimpleWEBPLoader.class);
+        Throwable[] errors = null;
 
-        for (SimpleWEBPLoader simpleWebpLoader : values()) {
+        for (int i = 0; i < length; i++) {
             try {
-                return simpleWebpLoader.decodeStreamByCurrentImageLoader(inputStream);
-            } catch (IOException e) {
-                errors.put(simpleWebpLoader, e);
+                return values[i].decode(inputStream);
+            } catch (Throwable e) {
+                if (errors == null) {
+                    errors = new Throwable[length];
+                }
+                errors[i] = e;
             }
         }
 
-        IOException e = new IOException(String.format("Fail to load image from %s because all the image loaders throw an IOException.", inputStream));
-        for (SimpleWEBPLoader simpleWebpLoader : values()) {
-            e.addSuppressed(new IOException(String.format("Image Loader %s throw an IOException", simpleWebpLoader.name()), errors.get(simpleWebpLoader)));
+        IOException e = new IOException(String.format("Failed to load image from %s.", inputStream));
+        if (errors != null) {
+            for (int i = 0; i < length; i++) {
+                e.addSuppressed(new IOException(String.format("Image Loader %s encountered an exception.", values[i].name()), errors[i]));
+            }
         }
         throw e;
-    }
-
-    @FunctionalInterface
-    private interface LoadAction {
-        RGBABuffer load(InputStream inputStream) throws IOException;
-    }
-
-    private final LoadAction delegate;
-
-    SimpleWEBPLoader(LoadAction delegate) {
-        this.delegate = delegate;
-    }
-
-    public RGBABuffer decodeStreamByCurrentImageLoader(InputStream inputStream) throws IOException {
-        return this.delegate.load(inputStream);
     }
 }

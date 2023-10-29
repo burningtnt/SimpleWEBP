@@ -63,9 +63,9 @@ public final class ColorTransform implements Transform {
                 int tmp_red = rgba[0];
                 int tmp_blue = rgba[2];
 
-                tmp_red += colorTransformDelta((byte) green_to_red, rgba[1]);
-                tmp_blue += colorTransformDelta((byte) green_to_blue, rgba[1]);
-                tmp_blue += colorTransformDelta((byte) red_to_blue, (byte) tmp_red); // Spec has red & 0xff
+                tmp_red += (byte) (((byte) green_to_red * rgba[1]) >> 5);
+                tmp_blue += (byte) (((byte) green_to_blue * rgba[1]) >> 5);
+                tmp_blue += (byte) (((byte) red_to_blue * (byte) tmp_red) >> 5); // Spec has red & 0xff
 
                 rgba[0] = (byte) (tmp_red & 0xff);
                 rgba[2] = (byte) (tmp_blue & 0xff);
@@ -79,7 +79,5 @@ public final class ColorTransform implements Transform {
     // should be performed using 8-bit two's complement (that is: uint8 range
     // [128-255] is mapped to the [-128, -1] range of its converted int8
     // value).
-    private static byte colorTransformDelta(final byte t, final byte c) {
-        return (byte) ((t * c) >> 5);
-    }
+    // private static byte colorTransformDelta(final byte t, final byte c) { return (byte) ((t * c) >> 5); }
 }

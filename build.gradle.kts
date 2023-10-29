@@ -2,17 +2,6 @@ import java.io.FileOutputStream
 import java.util.zip.ZipOutputStream
 import java.util.zip.ZipFile
 
-buildscript {
-    repositories { mavenCentral() }
-
-    dependencies {
-        classpath("org.glavo.kala:kala-platform:0.10.0")
-        classpath("org.ow2.asm:asm:9.4")
-        classpath("org.ow2.asm:asm-util:9.4")
-        classpath("org.ow2.asm:asm-commons:9.4")
-    }
-}
-
 plugins {
     id("java-library")
     id("maven-publish")
@@ -90,8 +79,6 @@ tasks.getByName("build") {
 }
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:24.0.1")
-
     testImplementation(project)
 }
 

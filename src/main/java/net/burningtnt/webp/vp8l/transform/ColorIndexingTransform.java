@@ -56,15 +56,11 @@ public final class ColorIndexingTransform implements Transform {
             // Reversed so no used elements are overridden (in case of packing)
             for (int x = width - 1; x >= 0; x--) {
                 int componentSize = 8 >> bits;
-                int packed = 1 << bits;
-                int xC = x / packed;
-                int componentOffset = componentSize * (x % packed);
-
-                int sample = raster.getSample(xC, y, 1);
-
-                int index = sample >> componentOffset & ((1 << componentSize) - 1);
-
-                System.arraycopy(colorTable, index * 4, rgba, 0, 4);
+                System.arraycopy(
+                        colorTable,
+                        ((int) raster.getSample(x / (1 << bits), y, 1) >> componentSize * (x % (1 << bits)) & ((1 << componentSize) - 1)) * 4,
+                        rgba, 0, 4
+                );
                 raster.setDataElements(x, y, rgba);
             }
         }

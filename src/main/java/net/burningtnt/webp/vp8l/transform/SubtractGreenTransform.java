@@ -47,14 +47,10 @@ public final class SubtractGreenTransform implements Transform {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 raster.getDataElements(x, y, rgba);
-                addGreenToBlueAndRed(rgba);
+                rgba[0] = (byte) ((rgba[0] + rgba[1]) & 0xff);
+                rgba[2] = (byte) ((rgba[2] + rgba[1]) & 0xff);
                 raster.setDataElements(x, y, rgba);
             }
         }
-    }
-
-    private static void addGreenToBlueAndRed(byte[] rgb) {
-        rgb[0] = (byte) ((rgb[0] + rgb[1]) & 0xff);
-        rgb[2] = (byte) ((rgb[2] + rgb[1]) & 0xff);
     }
 }

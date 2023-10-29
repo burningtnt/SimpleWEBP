@@ -56,10 +56,8 @@ public final class ColorCache {
     }
 
     public void insert(final int argb) {
-        colors[hashPix(argb, hashShift)] = argb;
+        colors[(int) (((argb * K_HASH_MUL) & 0xffffffffL) >> hashShift)] = argb;
     }
 
-    private static int hashPix(final int argb, final int shift) {
-        return (int) (((argb * K_HASH_MUL) & 0xffffffffL) >> shift);
-    }
+    // private static int hashPix(final int argb, final int shift) { return (int) (((argb * K_HASH_MUL) & 0xffffffffL) >> shift); }
 }
