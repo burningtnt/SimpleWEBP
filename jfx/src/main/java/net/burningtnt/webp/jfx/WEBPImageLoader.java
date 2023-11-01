@@ -25,7 +25,7 @@ public class WEBPImageLoader extends ImageLoaderImpl {
 
     @Override
     public ImageFrame load(int imageIndex, int width, int height, boolean preserveAspectRatio, boolean smooth) throws IOException {
-        RGBABuffer rgbaBuffer = SimpleWEBPLoader.decodeStreamByImageLoaders(this.inputStream);
+        RGBABuffer.AbsoluteRGBABuffer rgbaBuffer = SimpleWEBPLoader.decodeStreamByImageLoaders(this.inputStream);
 
         return new ImageFrame(
                 ImageStorage.ImageType.RGBA,

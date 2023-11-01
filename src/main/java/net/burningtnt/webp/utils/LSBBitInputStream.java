@@ -39,7 +39,7 @@ public final class LSBBitInputStream {
         if (bits <= 56) {
             return (buffer >>> bitOffset) & ((1L << bits) - 1);
         } else {
-            throw new IOException("Cannot peek over 56 bits");
+            throw new IOException("Cannot peek over 56 bits.");
         }
     }
 

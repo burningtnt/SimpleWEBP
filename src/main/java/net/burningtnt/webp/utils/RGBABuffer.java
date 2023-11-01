@@ -1,29 +1,26 @@
 package net.burningtnt.webp.utils;
 
 public abstract class RGBABuffer {
-    protected final int x;
-    protected final int y;
     protected final int w;
     protected final int h;
 
-    protected RGBABuffer(int x, int y, int w, int h) {
-        this.x = x;
-        this.y = y;
+    protected RGBABuffer(int w, int h) {
         this.w = w;
         this.h = h;
     }
 
-    public static RGBABuffer createAbsoluteImage(int w, int h) {
-        if (((long) w) * ((long) h) * 4L > Integer.MAX_VALUE) {
+    public static RGBABuffer.AbsoluteRGBABuffer createAbsoluteImage(int w, int h) {
+        long n = ((long) w) * ((long) h) * 4L;
+        if (n > Integer.MAX_VALUE || n < 0) {
             throw new IndexOutOfBoundsException("Image is too big.");
         }
 
-        return new AbsoluteRGBABuffer(0, 0, w, h);
+        return new AbsoluteRGBABuffer(w, h);
     }
 
-    public static RGBABuffer createRelativeImage(RGBABuffer parent, int x, int y, int w, int h) {
+    public static RGBABuffer.RelativeRGBABuffer createRelativeImage(RGBABuffer parent, int x, int y, int w, int h) {
         if (x < 0 || y < 0 || w < 0 || h < 0 || x > parent.w || y > parent.h || x + w > parent.w || y + h > parent.h) {
-            throw new IndexOutOfBoundsException(String.format("Child Image (%d, %d, %d, %d) is out of Parent Image (%d, %d)", x, y, w, h, parent.w, parent.h));
+            throw new IndexOutOfBoundsException(String.format("Child Image (%d, %d, %d, %d) is out of Parent Image (%d, %d).", x, y, w, h, parent.w, parent.h));
         }
 
         return new RelativeRGBABuffer(x, y, w, h, parent);
@@ -37,11 +34,9 @@ public abstract class RGBABuffer {
         return this.h;
     }
 
-    public abstract byte[] getRGBAData();
-
     protected final void checkBound(int x, int y) {
         if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
-            throw new IndexOutOfBoundsException(String.format("Pixel (%d, %d) is out of Image (%d, %d)", x, y, this.w, this.h));
+            throw new IndexOutOfBoundsException(String.format("Pixel (%d, %d) is out of Image (%d, %d).", x, y, this.w, this.h));
         }
     }
 
@@ -49,51 +44,54 @@ public abstract class RGBABuffer {
 
     public abstract void setDataElements(int x, int y, byte[] rgba);
 
-    public abstract byte getSample(int x, int y, int sample) throws UnsupportedOperationException;
+    public abstract byte getSample(int x, int y, int sample);
 
-    private static final class AbsoluteRGBABuffer extends RGBABuffer {
+    public static final class AbsoluteRGBABuffer extends RGBABuffer {
         private final byte[] rgbaData;
+        private final int lineOffset;
 
-        public AbsoluteRGBABuffer(int x, int y, int w, int h) {
-            super(x, y, w, h);
-            rgbaData = new byte[w * h * 4];
+        private AbsoluteRGBABuffer(int w, int h) {
+            super(w, h);
+            this.rgbaData = new byte[w * h * 4];
+            this.lineOffset = this.w * 4;
         }
 
-        @Override
         public byte[] getRGBAData() {
-            return rgbaData;
+            return this.rgbaData;
         }
 
         @Override
         public void getDataElements(int x, int y, byte[] rgba) {
             checkBound(x, y);
-            System.arraycopy(this.rgbaData, this.w * y * 4 + x * 4, rgba, 0, 4);
+            System.arraycopy(this.rgbaData, this.lineOffset * y + x * 4, rgba, 0, 4);
         }
 
         @Override
         public void setDataElements(int x, int y, byte[] rgba) {
             checkBound(x, y);
-            System.arraycopy(rgba, 0, this.rgbaData, this.w * y * 4 + x * 4, 4);
+            System.arraycopy(rgba, 0, this.rgbaData, this.lineOffset * y + x * 4, 4);
         }
 
         @Override
         public byte getSample(int x, int y, int sample) {
             checkBound(x, y);
-            return this.rgbaData[this.w * y * 4 + x * 4 + sample];
+            if (sample < 0 || sample > 3) {
+                throw new IndexOutOfBoundsException(String.format("RGBA format doesn't contain sample %d.", sample));
+            }
+            return this.rgbaData[this.lineOffset * y + x * 4 + sample];
         }
     }
 
-    private static final class RelativeRGBABuffer extends RGBABuffer {
+    public static final class RelativeRGBABuffer extends RGBABuffer {
+        private final int x;
+        private final int y;
         private final RGBABuffer parent;
 
-        public RelativeRGBABuffer(int x, int y, int w, int h, RGBABuffer parent) {
-            super(x, y, w, h);
+        private RelativeRGBABuffer(int x, int y, int w, int h, RGBABuffer parent) {
+            super(w, h);
+            this.x = x;
+            this.y = y;
             this.parent = parent;
-        }
-
-        @Override
-        public byte[] getRGBAData() {
-            throw new UnsupportedOperationException();
         }
 
         @Override

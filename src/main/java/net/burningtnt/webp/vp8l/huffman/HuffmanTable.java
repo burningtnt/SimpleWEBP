@@ -304,7 +304,7 @@ public final class HuffmanTable {
                     throw new IOException(
                             String.format(
                                     "Huffman: Code length repeat count overflows alphabet: Start index: %d, count: " +
-                                            "%d, alphabet size: %d", i, repeatCount, alphabetSize)
+                                            "%d, alphabet size: %d.", i, repeatCount, alphabetSize)
                     );
                 }
 

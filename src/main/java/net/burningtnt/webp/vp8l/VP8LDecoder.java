@@ -31,6 +31,7 @@
 
 package net.burningtnt.webp.vp8l;
 
+import net.burningtnt.webp.SimpleWEBPLoader;
 import net.burningtnt.webp.utils.LSBBitInputStream;
 import net.burningtnt.webp.utils.RGBABuffer;
 import net.burningtnt.webp.vp8l.colorcache.ColorCache;
@@ -76,37 +77,31 @@ public final class VP8LDecoder {
             0x40, 0x72, 0x7e, 0x61, 0x6f, 0x50, 0x71, 0x7f, 0x60, 0x70
     };
 
-    private static final int RIFF_MAGIC = 'R' << 24 | 'I' << 16 | 'F' << 8 | 'F';
-    private static final int WEBP_MAGIC = 'W' << 24 | 'E' << 16 | 'B' << 8 | 'P';
-    private static final int CHUNK_VP8L = 'V' << 24 | 'P' << 16 | '8' << 8 | 'L';
-
-    private static final byte LOSSLESSS_SIG = 0x2f;
-
     private final LSBBitInputStream lsbBitReader;
 
     private VP8LDecoder(LSBBitInputStream imageInput) {
         this.lsbBitReader = imageInput;
     }
 
-    public static RGBABuffer decodeStream(InputStream inputStream) throws IOException {
+    public static RGBABuffer.AbsoluteRGBABuffer decodeStream(InputStream inputStream) throws IOException {
         DataInputStream dataInputStream = new DataInputStream(inputStream);
-        if (dataInputStream.readInt() != RIFF_MAGIC) {
+        if (dataInputStream.readInt() != SimpleWEBPLoader.RIFF_MAGIC) {
             throw new IOException("Invalid RIFF_MAGIC.");
         }
 
         dataInputStream.readInt();
 
-        if (dataInputStream.readInt() != WEBP_MAGIC) {
-            throw new IOException("Invalid WEBP_MAGIC");
+        if (dataInputStream.readInt() != SimpleWEBPLoader.WEBP_MAGIC) {
+            throw new IOException("Invalid WEBP_MAGIC.");
         }
 
-        if (dataInputStream.readInt() != CHUNK_VP8L) {
-            throw new UnsupportedEncodingException("SimpleWEBP can only decode VP8L");
+        if (dataInputStream.readInt() != SimpleWEBPLoader.CHUNK_VP8L) {
+            throw new UnsupportedEncodingException("SimpleWEBP can only decode VP8L.");
         }
         dataInputStream.readInt();
 
-        if (dataInputStream.readByte() != LOSSLESSS_SIG) {
-            throw new IOException("Invalid LOSSLESS_SIG");
+        if (dataInputStream.readByte() != SimpleWEBPLoader.LOSSLESSS_SIG) {
+            throw new IOException("Invalid LOSSLESS_SIG.");
         }
 
         LSBBitInputStream lsbBitInputStream = new LSBBitInputStream(inputStream);
@@ -119,7 +114,7 @@ public final class VP8LDecoder {
             throw new IOException("Invalid Version.");
         }
 
-        RGBABuffer outputBuffer = RGBABuffer.createAbsoluteImage(width, height);
+        RGBABuffer.AbsoluteRGBABuffer outputBuffer = RGBABuffer.createAbsoluteImage(width, height);
 
         new VP8LDecoder(lsbBitInputStream).readVP8Lossless(outputBuffer, true, width, height);
 
@@ -141,7 +136,7 @@ public final class VP8LDecoder {
             colorCacheBits = (int) lsbBitReader.readBits(4);
 
             if (colorCacheBits < 1 || colorCacheBits > 11) {
-                throw new IOException("Corrupt WebP stream, colorCacheBits < 1 || > 11: " + colorCacheBits);
+                throw new IOException(String.format("Corrupt WebP stream, colorCacheBits < 1 || > 11: %d.", colorCacheBits));
             }
         }
 
@@ -382,7 +377,7 @@ public final class VP8LDecoder {
                 break;
             }
             default:
-                throw new IOException("Invalid transformType: " + transformType);
+                throw new IOException(String.format("Invalid transformType: %s.", transformType));
         }
 
         return xSize;
