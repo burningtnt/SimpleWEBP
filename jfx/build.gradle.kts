@@ -122,7 +122,7 @@ run {
 }
 
 dependencies {
-    implementation(rootProject)
+    api(rootProject)
     testImplementation(project)
 
     testImplementation("org.apache.commons:commons-imaging:1.0-alpha3")
