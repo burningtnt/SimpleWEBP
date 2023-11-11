@@ -82,6 +82,6 @@ public class WEBPImageLoader extends ImageLoaderImpl {
                 )
         );
 
-        return width != rWidth || height != rHeight ? ImageTools.scaleImageFrame(imageFrame, rWidth, rHeight, smooth) : imageFrame;
+        return rgbaBuffer.getWidth() != rWidth || rgbaBuffer.getHeight() != rHeight ? ImageTools.scaleImageFrame(imageFrame, rWidth, rHeight, smooth) : imageFrame;
     }
 }
