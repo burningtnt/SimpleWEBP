@@ -1,3 +1,3 @@
 rootProject.name = "SimpleWEBP"
 
-include("jfx")
+include("jfx", "awt")
