@@ -115,8 +115,8 @@ run {
 
     dependencies {
         for (module in modules) {
-            compileOnly("org.openjfx:javafx-$module:17.0.2:$classifer")
-            testImplementation("org.openjfx:javafx-$module:17.0.2:$classifer")
+            compileOnly("org.openjfx:javafx-$module:19.0.2.1:$classifer")
+            testImplementation("org.openjfx:javafx-$module:19.0.2.1:$classifer")
         }
     }
 }

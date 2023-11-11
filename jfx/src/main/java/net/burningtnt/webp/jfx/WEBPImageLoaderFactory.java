@@ -6,6 +6,7 @@ import com.sun.javafx.iio.ImageLoaderFactory;
 import com.sun.javafx.iio.ImageStorage;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     private static final WEBPImageLoaderFactory instance = new WEBPImageLoaderFactory();
@@ -15,7 +16,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
 
     @Override
     public ImageFormatDescription getFormatDescription() {
-        return WEBPDescriptor.getInstance();
+        return WEBPImageLoader.getImageDescriptor();
     }
 
     @Override
@@ -24,6 +25,17 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     }
 
     public static void setupListener() {
-        ImageStorage.addImageLoaderFactory(instance);
+        ImageStorage imageStorage; // Get the instance of ImageStorage if needed.
+        try {
+            imageStorage = (ImageStorage) ImageStorage.class.getMethod("getInstance").invoke(null);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            imageStorage = null;
+        }
+
+        try {
+            ImageStorage.class.getMethod("addImageLoaderFactory", ImageLoaderFactory.class).invoke(imageStorage, instance);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new IllegalStateException("Cannot install WEBPImageLoader", e);
+        }
     }
 }

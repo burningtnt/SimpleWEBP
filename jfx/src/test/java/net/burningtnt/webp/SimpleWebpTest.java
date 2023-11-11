@@ -66,7 +66,7 @@ public final class SimpleWebpTest {
     private static String current = null;
 
     @Test
-    public void main() throws IOException {
+    public void test() throws IOException {
         WEBPImageLoaderFactory.setupListener();
 
         for (String input : inputs) {
