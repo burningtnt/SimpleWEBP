@@ -15,8 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-public final class SimpleWebpTest {
-    private SimpleWebpTest() {
+public final class JFXModuleTest {
+    private JFXModuleTest() {
     }
 
     public static final String[] inputs = new String[]{
@@ -72,8 +72,8 @@ public final class SimpleWebpTest {
         for (String input : inputs) {
             current = input;
 
-            Image inputImage = new Image(Objects.requireNonNull(SimpleWebpTest.class.getResourceAsStream(String.format("/inputs/%s.webp", current))));
-            Image desiresImage = new Image(Objects.requireNonNull(SimpleWebpTest.class.getResourceAsStream(String.format("/desires/%s.png", current))));
+            Image inputImage = new Image(Objects.requireNonNull(JFXModuleTest.class.getResourceAsStream(String.format("/inputs/%s.webp", current))));
+            Image desiresImage = new Image(Objects.requireNonNull(JFXModuleTest.class.getResourceAsStream(String.format("/desires/%s.png", current))));
 
             Path output = Paths.get("build/tmp/test", current + ".png").toAbsolutePath();
             Files.deleteIfExists(output);

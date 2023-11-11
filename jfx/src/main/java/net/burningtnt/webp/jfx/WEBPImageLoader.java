@@ -64,17 +64,20 @@ public class WEBPImageLoader extends ImageLoaderImpl {
     }
 
     @Override
-    public ImageFrame load(int imageIndex, int width, int height, boolean preserveAspectRatio, boolean smooth) throws IOException {
+    public ImageFrame load(int imageIndex, int rWidth, int rHeight, boolean preserveAspectRatio, boolean smooth) throws IOException {
         RGBABuffer.AbsoluteRGBABuffer rgbaBuffer = SimpleWEBPLoader.decodeStreamByImageLoaders(this.inputStream);
 
-        int[] outWH = ImageTools.computeDimensions(width, height, width, height, preserveAspectRatio);
-        int rWidth = outWH[0], rHeight = outWH[1];
+        int width = rgbaBuffer.getWidth(), height = rgbaBuffer.getHeight();
+
+        int[] outWH = ImageTools.computeDimensions(width, height, rWidth, rHeight, preserveAspectRatio);
+        rWidth = outWH[0];
+        rHeight = outWH[1];
 
         ImageFrame imageFrame = new ImageFrame(
                 ImageStorage.ImageType.RGBA,
                 ByteBuffer.wrap(rgbaBuffer.getRGBAData()),
-                rgbaBuffer.getWidth(), rgbaBuffer.getHeight(),
-                rgbaBuffer.getWidth() * 4, null,
+                width, height,
+                width * 4, null,
                 new ImageMetadata(
                         null, Boolean.TRUE, null, null, null, null, null,
                         rWidth, rHeight,
@@ -82,6 +85,6 @@ public class WEBPImageLoader extends ImageLoaderImpl {
                 )
         );
 
-        return rgbaBuffer.getWidth() != rWidth || rgbaBuffer.getHeight() != rHeight ? ImageTools.scaleImageFrame(imageFrame, rWidth, rHeight, smooth) : imageFrame;
+        return width != rWidth || height != rHeight ? ImageTools.scaleImageFrame(imageFrame, rWidth, rHeight, smooth) : imageFrame;
     }
 }
