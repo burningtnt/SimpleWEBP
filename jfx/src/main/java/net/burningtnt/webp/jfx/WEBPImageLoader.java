@@ -76,7 +76,7 @@ public class WEBPImageLoader extends ImageLoaderImpl {
                 rgbaBuffer.getWidth(), rgbaBuffer.getHeight(),
                 rgbaBuffer.getWidth() * 4, null,
                 new ImageMetadata(
-                        null, Boolean.FALSE, null, null, null, null, null,
+                        null, Boolean.TRUE, null, null, null, null, null,
                         rWidth, rHeight,
                         null, null, null
                 )
