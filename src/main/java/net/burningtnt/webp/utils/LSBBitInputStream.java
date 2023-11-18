@@ -1,3 +1,17 @@
+/*
+ * Copyright 2023 Burning_TNT
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ *
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.burningtnt.webp.utils;
 
 import java.io.IOException;
@@ -30,8 +44,7 @@ public final class LSBBitInputStream {
 
             return ret;
         } else {
-            long lower = readBits(56);
-            return (readBits(bits - 56) << (56)) | lower;
+            return readBits(56) | (readBits(bits - 56) << (56));
         }
     }
 
@@ -49,8 +62,7 @@ public final class LSBBitInputStream {
 
     private void refillBuffer() throws IOException {
         for (; bitOffset >= 8; bitOffset -= 8) {
-            byte readByte = (byte) inputStream.read();
-            buffer = ((long) readByte << 56) | buffer >>> 8;
+            buffer = ((long) (byte) inputStream.read() << 56) | buffer >>> 8;
         }
     }
 }
