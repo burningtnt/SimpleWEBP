@@ -20,7 +20,8 @@ import com.sun.javafx.iio.ImageLoaderFactory;
 import com.sun.javafx.iio.ImageStorage;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 
 public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     private static final WEBPImageLoaderFactory instance = new WEBPImageLoaderFactory();
@@ -39,17 +40,36 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     }
 
     public static void setupListener() {
-        ImageStorage imageStorage; // Get the instance of ImageStorage if needed.
+        MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
         try {
-            imageStorage = (ImageStorage) ImageStorage.class.getMethod("getInstance").invoke(null);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            imageStorage = null;
-        }
-
-        try {
-            ImageStorage.class.getMethod("addImageLoaderFactory", ImageLoaderFactory.class).invoke(imageStorage, instance);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new IllegalStateException("Cannot install WEBPImageLoader", e);
+            LOOKUP.findVirtual(
+                    ImageStorage.class,
+                    "addImageLoaderFactory",
+                    MethodType.methodType(
+                            void.class,
+                            ImageLoaderFactory.class
+                    )
+            ).invoke((ImageStorage) LOOKUP.findStatic(
+                    ImageStorage.class,
+                    "getInstance",
+                    MethodType.methodType(
+                            ImageStorage.class
+                    )
+            ).invoke(), instance);
+        } catch (Throwable e) {
+            try {
+                LOOKUP.findStatic(
+                        ImageStorage.class,
+                        "addImageLoaderFactory",
+                        MethodType.methodType(
+                                void.class,
+                                ImageLoaderFactory.class
+                        )
+                ).invoke(instance);
+            } catch (Throwable e2) {
+                e2.addSuppressed(e);
+                throw new IllegalStateException("Cannot install WEBPImageLoader", e);
+            }
         }
     }
 }

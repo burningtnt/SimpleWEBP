@@ -26,7 +26,8 @@ import net.burningtnt.webp.utils.RGBABuffer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 
 public class WEBPImageLoader extends ImageLoaderImpl {
@@ -39,27 +40,35 @@ public class WEBPImageLoader extends ImageLoaderImpl {
     private static ImageDescriptor initImageDescriptor() {
         Throwable throwable1;
         try {
-            return ImageDescriptor.class.getConstructor(String.class, String[].class, ImageFormatDescription.Signature[].class)
-                    .newInstance(
-                            "WEBP",
-                            new String[]{"webp"},
-                            new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}
-                    );
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
+            return (ImageDescriptor) MethodHandles.lookup().findConstructor(
+                    ImageDescriptor.class,
+                    MethodType.methodType(
+                            void.class,
+                            String.class, String[].class, ImageFormatDescription.Signature[].class
+                    )
+            ).invoke(
+                    "WEBP",
+                    new String[]{"webp"},
+                    new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}
+            );
+        } catch (Throwable e) {
             throwable1 = e;
         }
 
         try {
-            return ImageDescriptor.class.getConstructor(String.class, String[].class, ImageFormatDescription.Signature[].class, String[].class)
-                    .newInstance(
-                            "WEBP",
-                            new String[]{"webp"},
-                            new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')},
-                            new String[]{"webp"}
-                    );
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException e) {
+            return (ImageDescriptor) MethodHandles.lookup().findConstructor(
+                    ImageDescriptor.class,
+                    MethodType.methodType(
+                            void.class,
+                            String.class, String[].class, ImageFormatDescription.Signature[].class, String[].class
+                    )
+            ).invoke(
+                    "WEBP",
+                    new String[]{"webp"},
+                    new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')},
+                    new String[]{"webp"}
+            );
+        } catch (Throwable e) {
             IllegalStateException t = new IllegalStateException("Cannot construct a ImageDescriptor.", e);
             t.addSuppressed(throwable1);
             throw t;
