@@ -21,57 +21,79 @@ import com.sun.javafx.iio.ImageStorage;
 import com.sun.javafx.iio.common.ImageDescriptor;
 import com.sun.javafx.iio.common.ImageLoaderImpl;
 import com.sun.javafx.iio.common.ImageTools;
+import net.burningtnt.bcigenerator.api.BytecodeImpl;
+import net.burningtnt.bcigenerator.api.BytecodeImplError;
 import net.burningtnt.webp.SimpleWEBPLoader;
 import net.burningtnt.webp.utils.RGBABuffer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 
-public class WEBPImageLoader extends ImageLoaderImpl {
+public final class WEBPImageLoader extends ImageLoaderImpl {
     private static final ImageDescriptor IMAGE_DESCRIPTOR = initImageDescriptor();
 
     public static ImageDescriptor getImageDescriptor() {
         return IMAGE_DESCRIPTOR;
     }
 
+    @BytecodeImpl({
+            "LABEL METHOD_HEAD",
+            "NEW com/sun/javafx/iio/common/ImageDescriptor",
+            "DUP",
+            "LDC \"WEBP\"",
+            "ALOAD 0",
+            "ALOAD 1",
+            "INVOKESPECIAL Lcom/sun/javafx/iio/common/ImageDescriptor;<init>(Ljava/lang/String;[Ljava/lang/String;[Lcom/sun/javafx/iio/ImageFormatDescription$Signature;)V",
+            "LABEL RELEASE_PARAMETER",
+            "ARETURN",
+            "LOCALVARIABLE extensions [Ljava/lang/String; METHOD_HEAD RELEASE_PARAMETER 0",
+            "LOCALVARIABLE signatures [Lcom/sun/javafx/iio/ImageFormatDescription/Signature; METHOD_HEAD RELEASE_PARAMETER 1",
+            "MAXS 5 2"
+    })
+    @SuppressWarnings("unused")
+    private static ImageDescriptor constructImageDescriptor1(String[] extensions, ImageFormatDescription.Signature[] signatures) throws NoSuchMethodError {
+        throw new BytecodeImplError();
+    }
+
+    @BytecodeImpl({
+            "LABEL METHOD_HEAD",
+            "NEW com/sun/javafx/iio/common/ImageDescriptor",
+            "DUP",
+            "LDC \"WEBP\"",
+            "ALOAD 0",
+            "ALOAD 1",
+            "ALOAD 2",
+            "INVOKESPECIAL Lcom/sun/javafx/iio/common/ImageDescriptor;<init>(Ljava/lang/String;[Ljava/lang/String;[Lcom/sun/javafx/iio/ImageFormatDescription$Signature;[Ljava/lang/String;)V",
+            "LABEL RELEASE_PARAMETER",
+            "ARETURN",
+            "LOCALVARIABLE extensions [Ljava/lang/String; METHOD_HEAD RELEASE_PARAMETER 0",
+            "LOCALVARIABLE signatures [Lcom/sun/javafx/iio/ImageFormatDescription/Signature; METHOD_HEAD RELEASE_PARAMETER 1",
+            "LOCALVARIABLE mimeTypes [Ljava/lang/String; METHOD_HEAD RELEASE_PARAMETER 2",
+            "MAXS 6 3"
+    })
+    @SuppressWarnings("unused")
+    private static ImageDescriptor constructImageDescriptor2(String[] extensions, ImageFormatDescription.Signature[] signatures, String[] mimeTypes) throws NoSuchMethodError {
+        throw new BytecodeImplError();
+    }
+
     private static ImageDescriptor initImageDescriptor() {
-        Throwable throwable1;
         try {
-            return (ImageDescriptor) MethodHandles.lookup().findConstructor(
-                    ImageDescriptor.class,
-                    MethodType.methodType(
-                            void.class,
-                            String.class, String[].class, ImageFormatDescription.Signature[].class
-                    )
-            ).invoke(
-                    "WEBP",
+            return constructImageDescriptor1(
                     new String[]{"webp"},
                     new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}
             );
-        } catch (Throwable e) {
-            throwable1 = e;
-        }
-
-        try {
-            return (ImageDescriptor) MethodHandles.lookup().findConstructor(
-                    ImageDescriptor.class,
-                    MethodType.methodType(
-                            void.class,
-                            String.class, String[].class, ImageFormatDescription.Signature[].class, String[].class
-                    )
-            ).invoke(
-                    "WEBP",
-                    new String[]{"webp"},
-                    new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')},
-                    new String[]{"webp"}
-            );
-        } catch (Throwable e) {
-            IllegalStateException t = new IllegalStateException("Cannot construct a ImageDescriptor.", e);
-            t.addSuppressed(throwable1);
-            throw t;
+        } catch (NoSuchMethodError e) {
+            try {
+                return constructImageDescriptor2(
+                        new String[]{"webp"},
+                        new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')},
+                        new String[]{"webp"}
+                );
+            } catch (NoSuchMethodError e2) {
+                e2.addSuppressed(e);
+                throw new IllegalStateException("Cannot construct a ImageDescriptor.", e2);
+            }
         }
     }
 

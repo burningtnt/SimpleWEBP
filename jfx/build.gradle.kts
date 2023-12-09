@@ -1,6 +1,4 @@
-import java.io.FileOutputStream
-import java.util.zip.ZipOutputStream
-import java.util.zip.ZipFile
+import kotlin.streams.toList
 
 buildscript {
     repositories { mavenCentral() }
@@ -28,6 +26,8 @@ java {
 
 repositories {
     mavenCentral()
+    maven(url = "https://jitpack.io")
+    maven(url = "https://libraries.minecraft.net")
 }
 
 val javadocJar = tasks.create<Jar>("javadocJar") {
@@ -48,8 +48,8 @@ tasks.test {
     jvmArgs("--illegal-access=deny")
 
     listOf(
-        "javafx.graphics/com.sun.javafx.iio",
-        "javafx.graphics/com.sun.javafx.iio.common"
+            "javafx.graphics/com.sun.javafx.iio",
+            "javafx.graphics/com.sun.javafx.iio.common"
     ).forEach { string ->
         jvmArgs("--add-exports", "${string}=ALL-UNNAMED")
     }
@@ -61,35 +61,6 @@ tasks.getByName("build") {
     })
     dependsOn(tasks.getByName("checkstyleTest") {
         group = "build"
-    })
-    dependsOn(tasks.create<Task>("lightJar") {
-        dependsOn(tasks.jar)
-        group = "build"
-
-        val inputFile = File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-        val outputFile = File(project.buildDir, "libs/${project.name}-${project.version}-light.jar")
-
-        inputs.files.plus(inputFile)
-        outputs.files.plus(outputFile)
-
-        doLast {
-            ZipFile(inputFile).use { zipFile ->
-                ZipOutputStream(FileOutputStream(outputFile)).use { zipOutputStream ->
-                    val inputEntries = zipFile.entries()
-                    while (inputEntries.hasMoreElements()) {
-                        val inputEntry = inputEntries.nextElement()
-
-                        if (inputEntry.name.startsWith("META-INF/") || inputEntry.name == "module-info.class") {
-                            continue
-                        }
-
-                        zipOutputStream.putNextEntry(inputEntry)
-                        zipOutputStream.write(zipFile.getInputStream(inputEntry).readAllBytes())
-                        zipOutputStream.closeEntry()
-                    }
-                }
-            }
-        }
     })
 }
 
@@ -106,7 +77,7 @@ run {
         kala.platform.Architecture.X86 -> classifer += "-x86"
         kala.platform.Architecture.AARCH64 -> classifer += "-aarch64"
         kala.platform.Architecture.ARM -> if (classifer == "linux") classifer =
-            "linux-arm32-monocle" else return@run
+                "linux-arm32-monocle" else return@run
 
         else -> return@run
     }
@@ -123,6 +94,7 @@ run {
 
 dependencies {
     api(rootProject)
+    compileOnly("com.github.burningtnt:BytecodeImplGenerator:b45b6638eeaeb903aa22ea947d37c45e5716a18c")
     testImplementation(project)
 
     testImplementation("org.apache.commons:commons-imaging:1.0-alpha3")
@@ -130,6 +102,22 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("org.glavo:simple-png:0.3.0")
+}
+
+tasks.getByName<JavaCompile>("compileJava") {
+    val bytecodeClasses = listOf(
+            "net/burningtnt/webp/jfx/WEBPImageLoader",
+            "net/burningtnt/webp/jfx/WEBPImageLoaderFactory"
+    )
+
+    doLast {
+        javaexec {
+            classpath(project.sourceSets["main"].compileClasspath)
+            mainClass.set("net.burningtnt.bcigenerator.BytecodeImplGenerator")
+            System.getProperty("bci.debug.address")?.let { address -> jvmArgs("-agentlib:jdwp=transport=dt_socket,server=n,address=$address,suspend=y") }
+            args(bytecodeClasses.stream().map { s -> project.layout.buildDirectory.file("classes/java/main/$s.class").get().asFile.path }.toList())
+        }
+    }
 }
 
 publishing {

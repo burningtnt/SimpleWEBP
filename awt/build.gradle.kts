@@ -1,7 +1,3 @@
-import java.io.FileOutputStream
-import java.util.zip.ZipOutputStream
-import java.util.zip.ZipFile
-
 plugins {
     id("java-library")
     id("maven-publish")
@@ -46,35 +42,6 @@ tasks.getByName("build") {
     })
     dependsOn(tasks.getByName("checkstyleTest") {
         group = "build"
-    })
-    dependsOn(tasks.create<Task>("lightJar") {
-        dependsOn(tasks.jar)
-        group = "build"
-
-        val inputFile = File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-        val outputFile = File(project.buildDir, "libs/${project.name}-${project.version}-light.jar")
-
-        inputs.files.plus(inputFile)
-        outputs.files.plus(outputFile)
-
-        doLast {
-            ZipFile(inputFile).use { zipFile ->
-                ZipOutputStream(FileOutputStream(outputFile)).use { zipOutputStream ->
-                    val inputEntries = zipFile.entries()
-                    while (inputEntries.hasMoreElements()) {
-                        val inputEntry = inputEntries.nextElement()
-
-                        if (inputEntry.name.startsWith("META-INF/") || inputEntry.name == "module-info.class") {
-                            continue
-                        }
-
-                        zipOutputStream.putNextEntry(inputEntry)
-                        zipOutputStream.write(zipFile.getInputStream(inputEntry).readAllBytes())
-                        zipOutputStream.closeEntry()
-                    }
-                }
-            }
-        }
     })
 }
 

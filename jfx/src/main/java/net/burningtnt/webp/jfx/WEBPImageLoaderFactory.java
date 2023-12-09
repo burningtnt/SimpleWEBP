@@ -17,13 +17,14 @@ package net.burningtnt.webp.jfx;
 import com.sun.javafx.iio.ImageFormatDescription;
 import com.sun.javafx.iio.ImageLoader;
 import com.sun.javafx.iio.ImageLoaderFactory;
-import com.sun.javafx.iio.ImageStorage;
+import net.burningtnt.bcigenerator.api.BytecodeImpl;
+import net.burningtnt.bcigenerator.api.BytecodeImplError;
 
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 
 public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
+    @SuppressWarnings("unused")
     private static final WEBPImageLoaderFactory instance = new WEBPImageLoaderFactory();
 
     private WEBPImageLoaderFactory() {
@@ -39,36 +40,43 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
         return new WEBPImageLoader(input);
     }
 
+    @BytecodeImpl({
+            "LABEL METHOD_HEAD",
+            "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;getInstance()Lcom/sun/javafx/iio/ImageStorage;",
+            "GETSTATIC Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;instance:Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;",
+            "INVOKEVIRTUAL Lcom/sun/javafx/iio/ImageStorage;addImageLoaderFactory(Lcom/sun/javafx/iio/ImageLoaderFactory;)V",
+            "LABEL RELEASE_PARAMETER",
+            "RETURN",
+            "MAXS 2 0"
+    })
+    @SuppressWarnings("unused")
+    private static void addImageLoaderFactory1() throws NoSuchMethodError {
+        throw new BytecodeImplError();
+    }
+
+    @BytecodeImpl({
+            "LABEL METHOD_HEAD",
+            "GETSTATIC Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;instance:Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;",
+            "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;addImageLoaderFactory(Lcom/sun/javafx/iio/ImageLoaderFactory;)V",
+            "LABEL RELEASE_PARAMETER",
+            "RETURN",
+            "MAXS 1 0"
+    })
+    @SuppressWarnings("unused")
+    private static void addImageLoaderFactory2() throws NoSuchMethodError {
+        throw new BytecodeImplError();
+    }
+
     public static void setupListener() {
         MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
         try {
-            LOOKUP.findVirtual(
-                    ImageStorage.class,
-                    "addImageLoaderFactory",
-                    MethodType.methodType(
-                            void.class,
-                            ImageLoaderFactory.class
-                    )
-            ).invoke((ImageStorage) LOOKUP.findStatic(
-                    ImageStorage.class,
-                    "getInstance",
-                    MethodType.methodType(
-                            ImageStorage.class
-                    )
-            ).invoke(), instance);
-        } catch (Throwable e) {
+            addImageLoaderFactory1();
+        } catch (NoSuchMethodError e) {
             try {
-                LOOKUP.findStatic(
-                        ImageStorage.class,
-                        "addImageLoaderFactory",
-                        MethodType.methodType(
-                                void.class,
-                                ImageLoaderFactory.class
-                        )
-                ).invoke(instance);
+                addImageLoaderFactory2();
             } catch (Throwable e2) {
                 e2.addSuppressed(e);
-                throw new IllegalStateException("Cannot install WEBPImageLoader", e);
+                throw new IllegalStateException("Cannot install WEBPImageLoader", e2);
             }
         }
     }
