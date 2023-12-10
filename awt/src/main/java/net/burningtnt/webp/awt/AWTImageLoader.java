@@ -31,6 +31,7 @@ public final class AWTImageLoader {
 
         int width = rgbaBuffer.getWidth(), height = rgbaBuffer.getHeight();
         BufferedImage awtImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+
         WritableRaster writableRaster = awtImage.getRaster();
         byte[] rgbaData = rgbaBuffer.getRGBAData(), cache = new byte[4];
         for (int y = 0; y < height; y++) {

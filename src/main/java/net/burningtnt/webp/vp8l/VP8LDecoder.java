@@ -84,6 +84,26 @@ public final class VP8LDecoder {
     }
 
     public static RGBABuffer.AbsoluteRGBABuffer decodeStream(InputStream inputStream) throws IOException {
+        checkDataHead(inputStream);
+
+        LSBBitInputStream lsbBitInputStream = new LSBBitInputStream(inputStream);
+
+        int width = 1 + (int) lsbBitInputStream.readBits(14);
+        int height = 1 + (int) lsbBitInputStream.readBits(14);
+        lsbBitInputStream.readBit();
+
+        if ((int) lsbBitInputStream.readBits(3) != 0) {
+            throw new IOException("Invalid Version.");
+        }
+
+        RGBABuffer.AbsoluteRGBABuffer outputBuffer = RGBABuffer.createAbsoluteImage(width, height);
+
+        new VP8LDecoder(lsbBitInputStream).readVP8Lossless(outputBuffer, true, width, height);
+
+        return outputBuffer;
+    }
+
+    private static void checkDataHead(InputStream inputStream) throws IOException {
         DataInputStream dataInputStream = new DataInputStream(inputStream);
         if (dataInputStream.readInt() != SimpleWEBPLoader.RIFF_MAGIC) {
             throw new IOException("Invalid RIFF_MAGIC.");
@@ -103,22 +123,6 @@ public final class VP8LDecoder {
         if (dataInputStream.readByte() != SimpleWEBPLoader.LOSSLESSS_SIG) {
             throw new IOException("Invalid LOSSLESS_SIG.");
         }
-
-        LSBBitInputStream lsbBitInputStream = new LSBBitInputStream(inputStream);
-
-        int width = 1 + (int) lsbBitInputStream.readBits(14);
-        int height = 1 + (int) lsbBitInputStream.readBits(14);
-        lsbBitInputStream.readBit();
-
-        if ((int) lsbBitInputStream.readBits(3) != 0) {
-            throw new IOException("Invalid Version.");
-        }
-
-        RGBABuffer.AbsoluteRGBABuffer outputBuffer = RGBABuffer.createAbsoluteImage(width, height);
-
-        new VP8LDecoder(lsbBitInputStream).readVP8Lossless(outputBuffer, true, width, height);
-
-        return outputBuffer;
     }
 
     private void readVP8Lossless(final RGBABuffer raster, final boolean topLevel, int width, int height) throws IOException {

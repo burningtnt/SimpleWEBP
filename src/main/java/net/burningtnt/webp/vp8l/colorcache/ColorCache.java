@@ -37,10 +37,10 @@ package net.burningtnt.webp.vp8l.colorcache;
  * @author <a href="mailto:harald.kuhr@gmail.com">Harald Kuhr</a>
  */
 public final class ColorCache {
+    private static final long K_HASH_MUL = 0x1e35a7bdL;
+
     private final int[] colors;   // Color entries
     private final int hashShift;  // Hash shift: 32 - hashBits.
-
-    private static final long K_HASH_MUL = 0x1e35a7bdL;
 
     public ColorCache(final int hashBits) {
         assert hashBits > 0 : "hasBits must > 0";

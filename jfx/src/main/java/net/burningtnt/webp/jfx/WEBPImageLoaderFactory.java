@@ -21,7 +21,6 @@ import net.burningtnt.bcigenerator.api.BytecodeImpl;
 import net.burningtnt.bcigenerator.api.BytecodeImplError;
 
 import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
 
 public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     @SuppressWarnings("unused")
@@ -68,7 +67,6 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     }
 
     public static void setupListener() {
-        MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
         try {
             addImageLoaderFactory1();
         } catch (NoSuchMethodError e) {

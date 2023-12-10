@@ -54,7 +54,7 @@ import java.util.List;
  * second level lookup table. This reference consists of an element with length as the max length of the level 2
  * table and value as the index of the table in the list of level 2 tables.
  * <p>
- * Reading bits from the input is done in a least significant bit first way (LSB) way, therefore the prefix of the
+ * Reading bits from the input is done in the least significant bit first way (LSB) way, therefore the prefix of the
  * read value of length i is the lowest i bits in inverse order.
  * The lookup table is directly indexed by the {@code LEVEL1_BITS} next bits read from the input (i.e. the bits
  * corresponding to next code are inverse suffix of the read value/index).
