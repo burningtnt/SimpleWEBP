@@ -24,6 +24,7 @@ import com.sun.javafx.iio.common.ImageTools;
 import net.burningtnt.bcigenerator.api.BytecodeImpl;
 import net.burningtnt.bcigenerator.api.BytecodeImplError;
 import net.burningtnt.webp.SimpleWEBPLoader;
+import net.burningtnt.webp.jfx.annotations.JavaFXAdapter;
 import net.burningtnt.webp.utils.RGBABuffer;
 
 import java.io.IOException;
@@ -37,6 +38,15 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
         return IMAGE_DESCRIPTOR;
     }
 
+    /**
+     * Construct a {@code ImageDescriptor} with WEBP signature.
+     * Same as {@code new ImageDescriptor("WEBP", extensions, signatures)}.
+     * @param extensions A constant which always be {@code "webp"}.
+     * @param signatures A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}}.
+     * @return The {@code ImageDescriptor} with WEBP signature.
+     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     */
+    @JavaFXAdapter
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "NEW com/sun/javafx/iio/common/ImageDescriptor",
@@ -56,6 +66,16 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
         throw new BytecodeImplError();
     }
 
+    /**
+     * Construct a {@code ImageDescriptor} with WEBP signature.
+     * Same as {@code new ImageDescriptor("WEBP", extensions, signatures)}.
+     * @param extensions A constant which always be {@code "webp"}.
+     * @param signatures A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}, mimeTypes}.
+     * @param mimeTypes A constant which always be {@code "webp"}.
+     * @return The {@code ImageDescriptor} with WEBP signature.
+     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     */
+    @JavaFXAdapter
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "NEW com/sun/javafx/iio/common/ImageDescriptor",
@@ -77,6 +97,10 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
         throw new BytecodeImplError();
     }
 
+    /**
+     * Construct a {@code ImageDescriptor} which adapts different JavaFX versions.
+     * @return The {@code ImageDescriptor} with WEBP signature.
+     */
     private static ImageDescriptor initImageDescriptor() {
         try {
             return constructImageDescriptor1(

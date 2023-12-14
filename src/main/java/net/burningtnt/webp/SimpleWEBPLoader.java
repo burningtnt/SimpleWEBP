@@ -34,31 +34,30 @@ public enum SimpleWEBPLoader {
     public static final int CHUNK_VP8L = 'V' << 24 | 'P' << 16 | '8' << 8 | 'L';
     public static final byte LOSSLESSS_SIG = 0x2f;
 
+    /**
+     * Decode the data in the specific inputStream by the specific SimpleWEBPLoader.
+     * @param inputStream A specific inputStream.
+     * @return An absolute RGBA formatted buffer.
+     * @throws IOException If the data is not WEBP formatted.
+     * @see SimpleWEBPLoader#decodeStreamByImageLoaders(InputStream)
+     */
     public abstract RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream) throws IOException;
 
     private static final int length = values().length;
     private static final SimpleWEBPLoader[] values = values();
 
+    /**
+     * Decode the data in the specific inputStream by all the SimpleWEBPLoaders which are supported.
+     * @param inputStream A specific inputStream.
+     * @return An absolute RGBA formatted buffer.
+     * @throws IOException If the data is not WEBP formatted.
+     * @see SimpleWEBPLoader#decode(InputStream)
+     */
     public static RGBABuffer.AbsoluteRGBABuffer decodeStreamByImageLoaders(InputStream inputStream) throws IOException {
-        Throwable[] errors = null;
-
-        for (int i = 0; i < length; i++) {
-            try {
-                return values[i].decode(inputStream);
-            } catch (Throwable e) {
-                if (errors == null) {
-                    errors = new Throwable[length];
-                }
-                errors[i] = e;
-            }
+        try {
+            return VP8L.decode(inputStream);
+        } catch (Throwable t) {
+            throw new IOException("Failed to load image.", new IOException("Image Loader VP8L encountered an exception.", t));
         }
-
-        IOException e = new IOException(String.format("Failed to load image from %s.", inputStream));
-        if (errors != null) {
-            for (int i = 0; i < length; i++) {
-                e.addSuppressed(new IOException(String.format("Image Loader %s encountered an exception.", values[i].name()), errors[i]));
-            }
-        }
-        throw e;
     }
 }

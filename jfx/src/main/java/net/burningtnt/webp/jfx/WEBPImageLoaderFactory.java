@@ -19,10 +19,14 @@ import com.sun.javafx.iio.ImageLoader;
 import com.sun.javafx.iio.ImageLoaderFactory;
 import net.burningtnt.bcigenerator.api.BytecodeImpl;
 import net.burningtnt.bcigenerator.api.BytecodeImplError;
+import net.burningtnt.webp.jfx.annotations.JavaFXAdapter;
 
 import java.io.InputStream;
 
 public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
+    /**
+     * This field is used in the method implemented by Bytecode Implementation Generator.
+     */
     @SuppressWarnings("unused")
     private static final WEBPImageLoaderFactory instance = new WEBPImageLoaderFactory();
 
@@ -39,6 +43,12 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
         return new WEBPImageLoader(input);
     }
 
+    /**
+     * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX.
+     * Same as {@code ImageStorage.getInstance().addImageLoaderFactory(instance)}.
+     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     */
+    @JavaFXAdapter
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;getInstance()Lcom/sun/javafx/iio/ImageStorage;",
@@ -53,6 +63,12 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
         throw new BytecodeImplError();
     }
 
+    /**
+     * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX.
+     * Same as {@code ImageStorage.addImageLoaderFactory(instance)}.
+     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     */
+    @JavaFXAdapter
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "GETSTATIC Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;instance:Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;",
@@ -66,6 +82,10 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
         throw new BytecodeImplError();
     }
 
+    /**
+     * Set up the image loader of SimpleWEBP. This method will adapt different versions of JavaFX automatically with
+     * the help of Bytecode Implementation Generator.
+     */
     public static void setupListener() {
         try {
             addImageLoaderFactory1();

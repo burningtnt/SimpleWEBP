@@ -24,6 +24,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_9
 }
 
+tasks.jar {
+   exclude("net/burningtnt/webp/jfx/annotations")
+}
+
 repositories {
     mavenCentral()
     maven(url = "https://jitpack.io")
