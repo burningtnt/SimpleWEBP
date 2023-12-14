@@ -43,9 +43,6 @@ public enum SimpleWEBPLoader {
      */
     public abstract RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream) throws IOException;
 
-    private static final int length = values().length;
-    private static final SimpleWEBPLoader[] values = values();
-
     /**
      * Decode the data in the specific inputStream by all the SimpleWEBPLoaders which are supported.
      * @param inputStream A specific inputStream.
