@@ -44,11 +44,30 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     }
 
     /**
-     * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX.
+     * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX <a href="https://github.com/openjdk/jfx/blob/171e484ca63bdfd50599417482eb704f71f10107/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/ImageStorage.java#L199">171e484ca63bdfd50599417482eb704f71f10107</a>.
+     * Same as {@code ImageStorage.addImageLoaderFactory(instance)}.
+     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     */
+    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "171e484ca63bdfd50599417482eb704f71f10107")
+    @BytecodeImpl({
+            "LABEL METHOD_HEAD",
+            "GETSTATIC Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;instance:Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;",
+            "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;addImageLoaderFactory(Lcom/sun/javafx/iio/ImageLoaderFactory;)V",
+            "LABEL RELEASE_PARAMETER",
+            "RETURN",
+            "MAXS 1 0"
+    })
+    @SuppressWarnings("unused")
+    private static void addImageLoaderFactory1() throws NoSuchMethodError {
+        throw new BytecodeImplError();
+    }
+
+    /**
+     * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX <a href="https://github.com/openjdk/jfx/blob/f326e78ffdfcbbc9085bc50a38e0b4454b757157/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/ImageStorage.java#L215">f326e78ffdfcbbc9085bc50a38e0b4454b757157</a>.
      * Same as {@code ImageStorage.getInstance().addImageLoaderFactory(instance)}.
      * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter
+    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;getInstance()Lcom/sun/javafx/iio/ImageStorage;",
@@ -59,34 +78,27 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
             "MAXS 2 0"
     })
     @SuppressWarnings("unused")
-    private static void addImageLoaderFactory1() throws NoSuchMethodError {
-        throw new BytecodeImplError();
-    }
-
-    /**
-     * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX.
-     * Same as {@code ImageStorage.addImageLoaderFactory(instance)}.
-     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
-     */
-    @JavaFXAdapter
-    @BytecodeImpl({
-            "LABEL METHOD_HEAD",
-            "GETSTATIC Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;instance:Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;",
-            "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;addImageLoaderFactory(Lcom/sun/javafx/iio/ImageLoaderFactory;)V",
-            "LABEL RELEASE_PARAMETER",
-            "RETURN",
-            "MAXS 1 0"
-    })
-    @SuppressWarnings("unused")
     private static void addImageLoaderFactory2() throws NoSuchMethodError {
         throw new BytecodeImplError();
     }
 
     /**
-     * Set up the image loader of SimpleWEBP. This method will adapt different versions of JavaFX automatically with
-     * the help of Bytecode Implementation Generator.
+     * <p>Add the listener of SimpleWEBP into JavaFX which adapts different JavaFX versions.</p>
+     *
+     * <p>If current JavaFX is lower than commit <a href="https://github.com/openjdk/jfx/blob/72deb62df704aa1baa355ad2e1428524cb978d6c/javafx-iio/src/com/sun/javafx/iio/common/ImageDescriptor.java#L39">72deb62df704aa1baa355ad2e1428524cb978d6c</a>, the signature of the constructor of ImageDescriptor is
+     * <pre> {@code
+     *     public ImageDescriptor(String formatName, String[] extensions, Signature[] signatures)
+     * }</pre>
+     *
+     * However, if current JavaFX is higher than commit <a href="https://github.com/openjdk/jfx/blob/f326e78ffdfcbbc9085bc50a38e0b4454b757157/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/common/ImageDescriptor.java#L39">f326e78ffdfcbbc9085bc50a38e0b4454b757157</a>, the signature is
+     * <pre> {@code
+     *     public ImageDescriptor(String formatName, String[] extensions, Signature[] signatures, String[] mimeSubtypes)
+     * }</pre>
+     * </p>
+     *
+     * @throws UnsupportedOperationException If SimpleWEBP cannot adapt current JavaFX version.
      */
-    public static void setupListener() {
+    public static void setupListener() throws UnsupportedOperationException {
         try {
             addImageLoaderFactory1();
         } catch (NoSuchMethodError e) {
@@ -94,7 +106,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
                 addImageLoaderFactory2();
             } catch (Throwable e2) {
                 e2.addSuppressed(e);
-                throw new IllegalStateException("Cannot install WEBPImageLoader", e2);
+                throw new UnsupportedOperationException("Cannot install WEBPImageLoader", e2);
             }
         }
     }

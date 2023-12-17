@@ -12,4 +12,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
 public @interface JavaFXAdapter {
+    enum State {
+        INVLUDED_BEFORE, INVLUDED_AFTER
+    }
+
+    State state();
+
+    String commit();
 }

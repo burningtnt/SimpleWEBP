@@ -39,14 +39,15 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
     }
 
     /**
-     * Construct a {@code ImageDescriptor} with WEBP signature.
-     * Same as {@code new ImageDescriptor("WEBP", extensions, signatures)}.
+     * <p>Construct a {@code ImageDescriptor} with WEBP signature in JavaFX <a href="https://github.com/openjdk/jfx/blob/72deb62df704aa1baa355ad2e1428524cb978d6c/javafx-iio/src/com/sun/javafx/iio/common/ImageDescriptor.java#L39">72deb62df704aa1baa355ad2e1428524cb978d6c</a>.</p>
+     * <p>Same as {@code new ImageDescriptor("WEBP", extensions, signatures)}.</p>
+     *
      * @param extensions A constant which always be {@code "webp"}.
      * @param signatures A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}}.
      * @return The {@code ImageDescriptor} with WEBP signature.
      * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter
+    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "72deb62df704aa1baa355ad2e1428524cb978d6c")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "NEW com/sun/javafx/iio/common/ImageDescriptor",
@@ -67,15 +68,17 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
     }
 
     /**
+     * <p>Construct a {@code ImageDescriptor} with WEBP signature in JavaFX <a href="https://github.com/openjdk/jfx/blob/f326e78ffdfcbbc9085bc50a38e0b4454b757157/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/common/ImageDescriptor.java#L39">f326e78ffdfcbbc9085bc50a38e0b4454b757157</a>.</p>
+     * <p>Same as {@code new ImageDescriptor("WEBP", extensions, signatures, extensions)}.</p>
      * Construct a {@code ImageDescriptor} with WEBP signature.
-     * Same as {@code new ImageDescriptor("WEBP", extensions, signatures)}.
-     * @param extensions A constant which always be {@code "webp"}.
-     * @param signatures A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}, mimeTypes}.
-     * @param mimeTypes A constant which always be {@code "webp"}.
+     *
+     * @param extensions   A constant which always be {@code "webp"}.
+     * @param signatures   A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}, mimeSubtypes}.
+     * @param mimeSubtypes A constant which always be {@code "webp"}.
      * @return The {@code ImageDescriptor} with WEBP signature.
      * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter
+    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "NEW com/sun/javafx/iio/common/ImageDescriptor",
@@ -89,34 +92,42 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
             "ARETURN",
             "LOCALVARIABLE extensions [Ljava/lang/String; METHOD_HEAD RELEASE_PARAMETER 0",
             "LOCALVARIABLE signatures [Lcom/sun/javafx/iio/ImageFormatDescription/Signature; METHOD_HEAD RELEASE_PARAMETER 1",
-            "LOCALVARIABLE mimeTypes [Ljava/lang/String; METHOD_HEAD RELEASE_PARAMETER 2",
+            "LOCALVARIABLE mimeSubtypes [Ljava/lang/String; METHOD_HEAD RELEASE_PARAMETER 2",
             "MAXS 6 3"
     })
     @SuppressWarnings("unused")
-    private static ImageDescriptor constructImageDescriptor2(String[] extensions, ImageFormatDescription.Signature[] signatures, String[] mimeTypes) throws NoSuchMethodError {
+    private static ImageDescriptor constructImageDescriptor2(String[] extensions, ImageFormatDescription.Signature[] signatures, String[] mimeSubtypes) throws NoSuchMethodError {
         throw new BytecodeImplError();
     }
 
     /**
-     * Construct a {@code ImageDescriptor} which adapts different JavaFX versions.
+     * <p>Construct a {@code ImageDescriptor} which adapts different JavaFX versions.</p>
+     *
+     * <p>If current JavaFX is lower than commit <a href="https://github.com/openjdk/jfx/blob/72deb62df704aa1baa355ad2e1428524cb978d6c/javafx-iio/src/com/sun/javafx/iio/common/ImageDescriptor.java#L39">72deb62df704aa1baa355ad2e1428524cb978d6c</a>, the signature of the constructor of ImageDescriptor is
+     * <pre> {@code
+     *     public ImageDescriptor(String formatName, String[] extensions, Signature[] signatures)
+     * }</pre>
+     * <p>
+     * However, if current JavaFX is higher than commit <a href="https://github.com/openjdk/jfx/blob/f326e78ffdfcbbc9085bc50a38e0b4454b757157/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/common/ImageDescriptor.java#L39">f326e78ffdfcbbc9085bc50a38e0b4454b757157</a>, the signature is
+     * <pre> {@code
+     *     public ImageDescriptor(String formatName, String[] extensions, Signature[] signatures, String[] mimeSubtypes)
+     * }</pre>
+     * </p>
+     *
      * @return The {@code ImageDescriptor} with WEBP signature.
+     * @throws UnsupportedOperationException If SimpleWEBP cannot adapt current JavaFX version.
      */
-    private static ImageDescriptor initImageDescriptor() {
+    private static ImageDescriptor initImageDescriptor() throws UnsupportedOperationException {
+        final String[] extensions = {"webp"};
+        final ImageFormatDescription.Signature[] signatures = {new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')};
         try {
-            return constructImageDescriptor1(
-                    new String[]{"webp"},
-                    new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}
-            );
+            return constructImageDescriptor1(extensions, signatures);
         } catch (NoSuchMethodError e) {
             try {
-                return constructImageDescriptor2(
-                        new String[]{"webp"},
-                        new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')},
-                        new String[]{"webp"}
-                );
+                return constructImageDescriptor2(extensions, signatures, extensions);
             } catch (NoSuchMethodError e2) {
                 e2.addSuppressed(e);
-                throw new IllegalStateException("Cannot construct a ImageDescriptor.", e2);
+                throw new UnsupportedOperationException("Cannot construct a ImageDescriptor.", e2);
             }
         }
     }
