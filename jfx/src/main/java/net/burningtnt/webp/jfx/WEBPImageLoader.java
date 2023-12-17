@@ -45,7 +45,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
      * @param extensions A constant which always be {@code "webp"}.
      * @param signatures A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}}.
      * @return The {@code ImageDescriptor} with WEBP signature.
-     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
     @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "72deb62df704aa1baa355ad2e1428524cb978d6c")
     @BytecodeImpl({
@@ -63,7 +63,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
             "MAXS 5 2"
     })
     @SuppressWarnings("unused")
-    private static ImageDescriptor constructImageDescriptor1(String[] extensions, ImageFormatDescription.Signature[] signatures) throws NoSuchMethodError {
+    private static ImageDescriptor constructImageDescriptor1(String[] extensions, ImageFormatDescription.Signature[] signatures) throws IncompatibleClassChangeError {
         throw new BytecodeImplError();
     }
 
@@ -76,7 +76,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
      * @param signatures   A constant which always {@code new ImageFormatDescription.Signature[]{new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')}, mimeSubtypes}.
      * @param mimeSubtypes A constant which always be {@code "webp"}.
      * @return The {@code ImageDescriptor} with WEBP signature.
-     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
     @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
@@ -96,7 +96,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
             "MAXS 6 3"
     })
     @SuppressWarnings("unused")
-    private static ImageDescriptor constructImageDescriptor2(String[] extensions, ImageFormatDescription.Signature[] signatures, String[] mimeSubtypes) throws NoSuchMethodError {
+    private static ImageDescriptor constructImageDescriptor2(String[] extensions, ImageFormatDescription.Signature[] signatures, String[] mimeSubtypes) throws IncompatibleClassChangeError {
         throw new BytecodeImplError();
     }
 
@@ -122,10 +122,10 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
         final ImageFormatDescription.Signature[] signatures = {new ImageFormatDescription.Signature((byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F')};
         try {
             return constructImageDescriptor1(extensions, signatures);
-        } catch (NoSuchMethodError e) {
+        } catch (IncompatibleClassChangeError e) {
             try {
                 return constructImageDescriptor2(extensions, signatures, extensions);
-            } catch (NoSuchMethodError e2) {
+            } catch (IncompatibleClassChangeError e2) {
                 e2.addSuppressed(e);
                 throw new UnsupportedOperationException("Cannot construct a ImageDescriptor.", e2);
             }

@@ -46,7 +46,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     /**
      * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX <a href="https://github.com/openjdk/jfx/blob/171e484ca63bdfd50599417482eb704f71f10107/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/ImageStorage.java#L199">171e484ca63bdfd50599417482eb704f71f10107</a>.
      * Same as {@code ImageStorage.addImageLoaderFactory(instance)}.
-     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
     @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "171e484ca63bdfd50599417482eb704f71f10107")
     @BytecodeImpl({
@@ -58,14 +58,14 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
             "MAXS 1 0"
     })
     @SuppressWarnings("unused")
-    private static void addImageLoaderFactory1() throws NoSuchMethodError {
+    private static void addImageLoaderFactory1() throws IncompatibleClassChangeError {
         throw new BytecodeImplError();
     }
 
     /**
      * Add the instance of {@code WEBPImageLoaderFactory} into JavaFX <a href="https://github.com/openjdk/jfx/blob/f326e78ffdfcbbc9085bc50a38e0b4454b757157/modules/javafx.graphics/src/main/java/com/sun/javafx/iio/ImageStorage.java#L215">f326e78ffdfcbbc9085bc50a38e0b4454b757157</a>.
      * Same as {@code ImageStorage.getInstance().addImageLoaderFactory(instance)}.
-     * @throws NoSuchMethodError If the adapter doesn't match the current JavaFX version.
+     * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
     @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
@@ -78,7 +78,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
             "MAXS 2 0"
     })
     @SuppressWarnings("unused")
-    private static void addImageLoaderFactory2() throws NoSuchMethodError {
+    private static void addImageLoaderFactory2() throws IncompatibleClassChangeError {
         throw new BytecodeImplError();
     }
 
@@ -101,7 +101,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
     public static void setupListener() throws UnsupportedOperationException {
         try {
             addImageLoaderFactory1();
-        } catch (NoSuchMethodError e) {
+        } catch (IncompatibleClassChangeError e) {
             try {
                 addImageLoaderFactory2();
             } catch (Throwable e2) {
