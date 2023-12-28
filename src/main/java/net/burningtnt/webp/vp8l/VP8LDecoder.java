@@ -41,8 +41,6 @@ import net.burningtnt.webp.vp8l.transform.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,10 +81,12 @@ public final class VP8LDecoder {
         this.lsbBitReader = imageInput;
     }
 
-    public static RGBABuffer.AbsoluteRGBABuffer decodeStream(InputStream inputStream) throws IOException {
-        checkDataHead(inputStream);
+    public static RGBABuffer.AbsoluteRGBABuffer decode(DataInputStream dataInputStream, LSBBitInputStream lsbBitInputStream) throws IOException {
+        dataInputStream.readInt();
 
-        LSBBitInputStream lsbBitInputStream = new LSBBitInputStream(inputStream);
+        if (dataInputStream.readByte() != SimpleWEBPLoader.LOSSLESSS_SIG) {
+            throw new IOException("Invalid LOSSLESS_SIG.");
+        }
 
         int width = 1 + (int) lsbBitInputStream.readBits(14);
         int height = 1 + (int) lsbBitInputStream.readBits(14);
@@ -101,28 +101,6 @@ public final class VP8LDecoder {
         new VP8LDecoder(lsbBitInputStream).readVP8Lossless(outputBuffer, true, width, height);
 
         return outputBuffer;
-    }
-
-    private static void checkDataHead(InputStream inputStream) throws IOException {
-        DataInputStream dataInputStream = new DataInputStream(inputStream);
-        if (dataInputStream.readInt() != SimpleWEBPLoader.RIFF_MAGIC) {
-            throw new IOException("Invalid RIFF_MAGIC.");
-        }
-
-        dataInputStream.readInt();
-
-        if (dataInputStream.readInt() != SimpleWEBPLoader.WEBP_MAGIC) {
-            throw new IOException("Invalid WEBP_MAGIC.");
-        }
-
-        if (dataInputStream.readInt() != SimpleWEBPLoader.CHUNK_VP8L) {
-            throw new UnsupportedEncodingException("SimpleWEBP can only decode VP8L.");
-        }
-        dataInputStream.readInt();
-
-        if (dataInputStream.readByte() != SimpleWEBPLoader.LOSSLESSS_SIG) {
-            throw new IOException("Invalid LOSSLESS_SIG.");
-        }
     }
 
     private void readVP8Lossless(final RGBABuffer raster, final boolean topLevel, int width, int height) throws IOException {

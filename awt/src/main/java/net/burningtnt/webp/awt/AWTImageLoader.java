@@ -27,7 +27,7 @@ public final class AWTImageLoader {
     }
 
     public static BufferedImage decode(InputStream inputStream) throws IOException {
-        RGBABuffer.AbsoluteRGBABuffer rgbaBuffer = SimpleWEBPLoader.decodeStreamByImageLoaders(inputStream);
+        RGBABuffer.AbsoluteRGBABuffer rgbaBuffer = SimpleWEBPLoader.decode(inputStream);
 
         int width = rgbaBuffer.getWidth(), height = rgbaBuffer.getHeight();
         BufferedImage awtImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);

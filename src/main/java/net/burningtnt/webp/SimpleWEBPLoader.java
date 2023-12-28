@@ -14,17 +14,19 @@
  */
 package net.burningtnt.webp;
 
+import net.burningtnt.webp.utils.LSBBitInputStream;
 import net.burningtnt.webp.utils.RGBABuffer;
 import net.burningtnt.webp.vp8l.VP8LDecoder;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 public enum SimpleWEBPLoader {
     VP8L {
         @Override
-        public RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream) throws IOException {
-            return VP8LDecoder.decodeStream(inputStream);
+        public RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream, DataInputStream dataInputStream, LSBBitInputStream lsbBitInputStream) throws IOException {
+            return VP8LDecoder.decode(dataInputStream, lsbBitInputStream);
         }
     };
 
@@ -34,27 +36,35 @@ public enum SimpleWEBPLoader {
     public static final int CHUNK_VP8L = 'V' << 24 | 'P' << 16 | '8' << 8 | 'L';
     public static final byte LOSSLESSS_SIG = 0x2f;
 
-    /**
-     * Decode the data in the specific inputStream by the specific SimpleWEBPLoader.
-     * @param inputStream A specific inputStream.
-     * @return An absolute RGBA formatted buffer.
-     * @throws IOException If the data is not WEBP formatted.
-     * @see SimpleWEBPLoader#decodeStreamByImageLoaders(InputStream)
-     */
-    public abstract RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream) throws IOException;
+    protected abstract RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream, DataInputStream dataInputStream, LSBBitInputStream lsbBitInputStream) throws IOException;
 
     /**
      * Decode the data in the specific inputStream by all the SimpleWEBPLoaders which are supported.
+     *
      * @param inputStream A specific inputStream.
      * @return An absolute RGBA formatted buffer.
      * @throws IOException If the data is not WEBP formatted.
-     * @see SimpleWEBPLoader#decode(InputStream)
      */
-    public static RGBABuffer.AbsoluteRGBABuffer decodeStreamByImageLoaders(InputStream inputStream) throws IOException {
-        try {
-            return VP8L.decode(inputStream);
-        } catch (Throwable t) {
-            throw new IOException("Failed to load image.", new IOException("Image Loader VP8L encountered an exception.", t));
+    public static RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream) throws IOException {
+        try (DataInputStream dataInputStream = new DataInputStream(inputStream)) {
+            if (dataInputStream.readInt() != RIFF_MAGIC) {
+                throw new IOException("Invalid RIFF_MAGIC.");
+            }
+
+            dataInputStream.readInt();
+
+            if (dataInputStream.readInt() != WEBP_MAGIC) {
+                throw new IOException("Invalid WEBP_MAGIC.");
+            }
+
+            switch (dataInputStream.readInt()) {
+                case CHUNK_VP8L: {
+                    return VP8L.decode(inputStream, dataInputStream, new LSBBitInputStream(inputStream));
+                }
+                default: {
+                    throw new IOException("SimpleWEBP cannot decode such WEBP type.");
+                }
+            }
         }
     }
 }

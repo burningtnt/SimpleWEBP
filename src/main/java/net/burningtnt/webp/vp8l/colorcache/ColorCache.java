@@ -45,9 +45,7 @@ public final class ColorCache {
     public ColorCache(final int hashBits) {
         assert hashBits > 0 : "hasBits must > 0";
 
-        int hashSize = 1 << hashBits;
-
-        colors = new int[hashSize];
+        colors = new int[1 << hashBits]; // new int[hashSize]
         hashShift = 32 - hashBits;
     }
 

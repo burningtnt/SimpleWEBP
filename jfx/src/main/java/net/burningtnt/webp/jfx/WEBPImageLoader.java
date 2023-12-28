@@ -145,7 +145,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
 
     @Override
     public ImageFrame load(int imageIndex, int rWidth, int rHeight, boolean preserveAspectRatio, boolean smooth) throws IOException {
-        RGBABuffer.AbsoluteRGBABuffer rgbaBuffer = SimpleWEBPLoader.decodeStreamByImageLoaders(this.inputStream);
+        RGBABuffer.AbsoluteRGBABuffer rgbaBuffer = SimpleWEBPLoader.decode(this.inputStream);
 
         int width = rgbaBuffer.getWidth(), height = rgbaBuffer.getHeight();
 
