@@ -50,9 +50,9 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
     @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "72deb62df704aa1baa355ad2e1428524cb978d6c")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
-            "NEW com/sun/javafx/iio/common/ImageDescriptor",
+            "NEW Lcom/sun/javafx/iio/common/ImageDescriptor;",
             "DUP",
-            "LDC STRING \"WEBP\"",
+            "LDC (STRING \"WEBP\")",
             "ALOAD 0",
             "ALOAD 1",
             "INVOKESPECIAL Lcom/sun/javafx/iio/common/ImageDescriptor;<init>(Ljava/lang/String;[Ljava/lang/String;[Lcom/sun/javafx/iio/ImageFormatDescription$Signature;)V",
@@ -81,9 +81,9 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
     @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
-            "NEW com/sun/javafx/iio/common/ImageDescriptor",
+            "NEW Lcom/sun/javafx/iio/common/ImageDescriptor;",
             "DUP",
-            "LDC STRING \"WEBP\"",
+            "LDC (STRING \"WEBP\")",
             "ALOAD 0",
             "ALOAD 1",
             "ALOAD 2",

@@ -22,21 +22,15 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public enum SimpleWEBPLoader {
-    VP8L {
-        @Override
-        public RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream, DataInputStream dataInputStream, LSBBitInputStream lsbBitInputStream) throws IOException {
-            return VP8LDecoder.decode(dataInputStream, lsbBitInputStream);
-        }
-    };
+public final class SimpleWEBPLoader {
+    private SimpleWEBPLoader() {
+    }
 
     // WEBP Constants
     public static final int RIFF_MAGIC = 'R' << 24 | 'I' << 16 | 'F' << 8 | 'F';
     public static final int WEBP_MAGIC = 'W' << 24 | 'E' << 16 | 'B' << 8 | 'P';
     public static final int CHUNK_VP8L = 'V' << 24 | 'P' << 16 | '8' << 8 | 'L';
     public static final byte LOSSLESSS_SIG = 0x2f;
-
-    protected abstract RGBABuffer.AbsoluteRGBABuffer decode(InputStream inputStream, DataInputStream dataInputStream, LSBBitInputStream lsbBitInputStream) throws IOException;
 
     /**
      * Decode the data in the specific inputStream by all the SimpleWEBPLoaders which are supported.
@@ -59,7 +53,7 @@ public enum SimpleWEBPLoader {
 
             switch (dataInputStream.readInt()) {
                 case CHUNK_VP8L: {
-                    return VP8L.decode(inputStream, dataInputStream, new LSBBitInputStream(inputStream));
+                    return VP8LDecoder.decode(dataInputStream, new LSBBitInputStream(inputStream));
                 }
                 default: {
                     throw new IOException("SimpleWEBP cannot decode such WEBP type.");

@@ -98,7 +98,7 @@ run {
 
 dependencies {
     api(rootProject)
-    compileOnly("com.github.burningtnt:BytecodeImplGenerator:975a0fcfde5abfa407787fa816376de9e3e23fec")
+    compileOnly("com.github.burningtnt:BytecodeImplGenerator:ed7051a4150e53e455fc1f0adf1629242e8aeef5")
     testImplementation(project)
 
     testImplementation("org.apache.commons:commons-imaging:1.0-alpha3")
