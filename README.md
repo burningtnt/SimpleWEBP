@@ -2,7 +2,7 @@
 
 A zero-dependency minimalist Java library for reading WEBP files.
 
-It is implemented in Java and **independent** of Java AWT (ImageIO) / JavaFx.
+It is implemented in Java and **independent** of Java AWT (ImageIO) / JavaFX.
 It can be easily used with Android.
 
 ## Feature
@@ -44,7 +44,7 @@ repositories {
 Please replace `%latest-commit-hash%` with the latest commit hash.
 e.g. `624c20367a05583af8066907ff95f5e8276ad7f4`
 
-### Use SimpleWEBP without JavaFx / Java AWT (imageio):
+### Use SimpleWEBP without JavaFX / Java AWT (imageio):
 
 Maven:
 
@@ -63,7 +63,7 @@ Gradle:
 implementation("com.github.burningtnt.SimpleWEBP:SimpleWEBP:%latest-commit-hash%")
 ```
 
-### Use SimpleWEBP in a JavaFx project:
+### Use SimpleWEBP in a JavaFX project:
 
 ```xml
 
