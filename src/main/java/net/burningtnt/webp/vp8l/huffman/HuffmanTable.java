@@ -71,7 +71,7 @@ public final class HuffmanTable {
      */
     private static final int[] L_CODE_ORDER = {17, 18, 0, 1, 2, 3, 4, 5, 16, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     private final int[] level1 = new int[1 << LEVEL1_BITS];
-    private final List<int[]> level2 = new ArrayList<>();
+    private final List<int[]> level2 = new ArrayList<>(64);
 
     /**
      * Build a Huffman table by reading the encoded symbol lengths from the reader
