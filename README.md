@@ -1,4 +1,4 @@
-# SimpleWebp
+# SimpleWEBP
 
 A zero-dependency minimalist Java library for reading WEBP files.
 
