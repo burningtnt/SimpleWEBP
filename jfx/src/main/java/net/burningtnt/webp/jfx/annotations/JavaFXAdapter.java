@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface JavaFXAdapter {
     enum State {
-        INVLUDED_BEFORE, INVLUDED_AFTER
+        INCLUDED_BEFORE, INCLUDED_AFTER
     }
 
     State state();

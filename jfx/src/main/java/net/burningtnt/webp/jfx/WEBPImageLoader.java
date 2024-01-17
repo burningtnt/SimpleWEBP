@@ -47,7 +47,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
      * @return The {@code ImageDescriptor} with WEBP signature.
      * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "72deb62df704aa1baa355ad2e1428524cb978d6c")
+    @JavaFXAdapter(state = JavaFXAdapter.State.INCLUDED_BEFORE, commit = "72deb62df704aa1baa355ad2e1428524cb978d6c")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "NEW Lcom/sun/javafx/iio/common/ImageDescriptor;",
@@ -78,7 +78,7 @@ public final class WEBPImageLoader extends ImageLoaderImpl {
      * @return The {@code ImageDescriptor} with WEBP signature.
      * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
+    @JavaFXAdapter(state = JavaFXAdapter.State.INCLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "NEW Lcom/sun/javafx/iio/common/ImageDescriptor;",

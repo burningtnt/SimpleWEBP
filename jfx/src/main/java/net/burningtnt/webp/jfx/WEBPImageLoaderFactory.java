@@ -48,7 +48,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
      * Same as {@code ImageStorage.addImageLoaderFactory(instance)}.
      * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_BEFORE, commit = "171e484ca63bdfd50599417482eb704f71f10107")
+    @JavaFXAdapter(state = JavaFXAdapter.State.INCLUDED_BEFORE, commit = "171e484ca63bdfd50599417482eb704f71f10107")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "GETSTATIC Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;instance:Lnet/burningtnt/webp/jfx/WEBPImageLoaderFactory;",
@@ -67,7 +67,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
      * Same as {@code ImageStorage.getInstance().addImageLoaderFactory(instance)}.
      * @throws IncompatibleClassChangeError If the adapter doesn't match the current JavaFX version.
      */
-    @JavaFXAdapter(state = JavaFXAdapter.State.INVLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
+    @JavaFXAdapter(state = JavaFXAdapter.State.INCLUDED_AFTER, commit = "f326e78ffdfcbbc9085bc50a38e0b4454b757157")
     @BytecodeImpl({
             "LABEL METHOD_HEAD",
             "INVOKESTATIC Lcom/sun/javafx/iio/ImageStorage;getInstance()Lcom/sun/javafx/iio/ImageStorage;",
