@@ -104,7 +104,7 @@ public final class WEBPImageLoaderFactory implements ImageLoaderFactory {
         } catch (IncompatibleClassChangeError e) {
             try {
                 addImageLoaderFactory2();
-            } catch (Throwable e2) {
+            } catch (IncompatibleClassChangeError e2) {
                 e2.addSuppressed(e);
                 throw new UnsupportedOperationException("Cannot install WEBPImageLoader", e2);
             }
